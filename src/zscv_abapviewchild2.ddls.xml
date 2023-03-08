@@ -3,10 +3,10 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <DDLS>
-    <DDLNAME>ZSCV_ABAPVIEWCHILD</DDLNAME>
+    <DDLNAME>ZSCV_ABAPVIEWCHILD2</DDLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
     <DDTEXT>ABAP View</DDTEXT>
-    <SOURCE_TYPE>W</SOURCE_TYPE>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

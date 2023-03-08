@@ -14,34 +14,34 @@ REPORT zscv_search_cds_views.
 
 TABLES: ars_w_api_state, dd26s, sscrfields.
 
-SELECTION-SCREEN BEGIN OF BLOCK sel  WITH FRAME TITLE text-100.
+SELECTION-SCREEN BEGIN OF BLOCK sel  WITH FRAME TITLE TEXT-100.
 
   "Source view name selection
-  SELECTION-SCREEN BEGIN OF BLOCK dbtab WITH FRAME TITLE text-101.
+  SELECTION-SCREEN BEGIN OF BLOCK dbtab WITH FRAME TITLE TEXT-101.
 
     "All tables
-    SELECTION-SCREEN  PUSHBUTTON 1(10) text-006 USER-COMMAND dball.
+    SELECTION-SCREEN  PUSHBUTTON 1(10) TEXT-006 USER-COMMAND dball.
     "Get successor CDS view
-    SELECTION-SCREEN  PUSHBUTTON 13(20) text-007 USER-COMMAND dbsucc.
+    SELECTION-SCREEN  PUSHBUTTON 13(20) TEXT-007 USER-COMMAND dbsucc.
     "Compatibility tables
-    SELECTION-SCREEN  PUSHBUTTON 41(20) text-005 USER-COMMAND compdb.
+    SELECTION-SCREEN  PUSHBUTTON 41(20) TEXT-005 USER-COMMAND compdb.
 
     DATA db_view_name_type TYPE vibastab.
     SELECT-OPTIONS s_dbtab FOR db_view_name_type.
     SELECTION-SCREEN BEGIN OF LINE.
       SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(70) text-011.
+      SELECTION-SCREEN COMMENT 1(70) TEXT-011.
     SELECTION-SCREEN END OF LINE.
 
     SELECTION-SCREEN BEGIN OF LINE.
       SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(75) text-012.
+      SELECTION-SCREEN COMMENT 1(75) TEXT-012.
     SELECTION-SCREEN END OF LINE.
 
   SELECTION-SCREEN END OF BLOCK dbtab.
 
   "Result view name selection
-  SELECTION-SCREEN BEGIN OF BLOCK vname WITH FRAME TITLE text-102.
+  SELECTION-SCREEN BEGIN OF BLOCK vname WITH FRAME TITLE TEXT-102.
 
     "Custom ABAP views
     SELECTION-SCREEN  PUSHBUTTON 2(17) TEXT-001 USER-COMMAND q_custom.
@@ -55,7 +55,7 @@ SELECTION-SCREEN BEGIN OF BLOCK sel  WITH FRAME TITLE text-100.
     SELECT-OPTIONS s_abapvw FOR dd26s-viewname.
     SELECTION-SCREEN BEGIN OF LINE.
       SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(70) text-104.
+      SELECTION-SCREEN COMMENT 1(70) TEXT-104.
     SELECTION-SCREEN END OF LINE.
 
     SELECT-OPTIONS s_ddicvw FOR dd26s-viewname.
@@ -66,16 +66,16 @@ SELECTION-SCREEN BEGIN OF BLOCK sel  WITH FRAME TITLE text-100.
   SELECTION-SCREEN END OF BLOCK vname.
 
   "Status selection
-  SELECTION-SCREEN BEGIN OF BLOCK stat WITH FRAME TITLE text-103.
+  SELECTION-SCREEN BEGIN OF BLOCK stat WITH FRAME TITLE TEXT-103.
 
     "ABAP all
-    SELECTION-SCREEN  PUSHBUTTON 1(15) text-105 USER-COMMAND q_aball.
+    SELECTION-SCREEN  PUSHBUTTON 1(15) TEXT-105 USER-COMMAND q_aball.
     "ABAP internal
-    SELECTION-SCREEN  PUSHBUTTON 18(18) text-106 USER-COMMAND q_abap.
+    SELECTION-SCREEN  PUSHBUTTON 18(18) TEXT-106 USER-COMMAND q_abap.
     "API CDS views only
-    SELECTION-SCREEN  PUSHBUTTON 38(20) text-107 USER-COMMAND q_api.
+    SELECTION-SCREEN  PUSHBUTTON 38(20) TEXT-107 USER-COMMAND q_api.
     "All statuses
-    SELECTION-SCREEN  PUSHBUTTON 60(15) text-108 USER-COMMAND q_stall.
+    SELECTION-SCREEN  PUSHBUTTON 60(15) TEXT-108 USER-COMMAND q_stall.
 
     SELECT-OPTIONS s_c1stat FOR ars_w_api_state-release_state.
     PARAMETERS p_c1kapp AS CHECKBOX.
@@ -84,9 +84,9 @@ SELECTION-SCREEN BEGIN OF BLOCK sel  WITH FRAME TITLE text-100.
 
   SELECTION-SCREEN END OF BLOCK stat.
 
-  SELECTION-SCREEN BEGIN OF BLOCK viewtype WITH FRAME TITLE text-109.
+  SELECTION-SCREEN BEGIN OF BLOCK viewtype WITH FRAME TITLE TEXT-109.
     "#BASIC
-    SELECTION-SCREEN  PUSHBUTTON 1(18) text-008 USER-COMMAND vt_basic.
+    SELECTION-SCREEN  PUSHBUTTON 1(18) TEXT-008 USER-COMMAND vt_basic.
 *    "All
 *    SELECTION-SCREEN  PUSHBUTTON 21(18) dc_all USER-COMMAND dc_all.
     DATA vdm_view_type_type TYPE ddannotation_val.
@@ -95,23 +95,23 @@ SELECTION-SCREEN BEGIN OF BLOCK sel  WITH FRAME TITLE text-100.
 
   SELECTION-SCREEN BEGIN OF BLOCK datcat WITH FRAME TITLE datcat.
     "#DIMENSION
-    SELECTION-SCREEN  PUSHBUTTON 1(18) text-009 USER-COMMAND dc_dim.
+    SELECTION-SCREEN  PUSHBUTTON 1(18) TEXT-009 USER-COMMAND dc_dim.
     "All
-    SELECTION-SCREEN  PUSHBUTTON 21(18) text-010 USER-COMMAND dc_all.
+    SELECTION-SCREEN  PUSHBUTTON 21(18) TEXT-010 USER-COMMAND dc_all.
     DATA data_category_type TYPE ddannotation_val.
     SELECT-OPTIONS s_datcat FOR data_category_type.
   SELECTION-SCREEN END OF BLOCK datcat.
 
-  "Status selection
-  SELECTION-SCREEN BEGIN OF BLOCK ddiccds WITH FRAME TITLE text-110.
-    PARAMETERS:
-      p_ddcddc RADIOBUTTON GROUP ddcc  DEFAULT 'X',
-      p_ddcddl RADIOBUTTON GROUP ddcc.
-    SELECTION-SCREEN BEGIN OF LINE.
-      SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(70) text-111.
-    SELECTION-SCREEN END OF LINE.
-  SELECTION-SCREEN END OF BLOCK ddiccds.
+*  "Status selection
+*  SELECTION-SCREEN BEGIN OF BLOCK ddiccds WITH FRAME TITLE TEXT-110.
+*    PARAMETERS:
+*      p_ddcddc RADIOBUTTON GROUP ddcc  DEFAULT 'X',
+*      p_ddcddl RADIOBUTTON GROUP ddcc.
+*    SELECTION-SCREEN BEGIN OF LINE.
+*      SELECTION-SCREEN POSITION 1.
+*      SELECTION-SCREEN COMMENT 1(70) TEXT-111.
+*    SELECTION-SCREEN END OF LINE.
+*  SELECTION-SCREEN END OF BLOCK ddiccds.
 
 SELECTION-SCREEN END OF BLOCK sel.
 
@@ -457,10 +457,31 @@ CLASS zscv_view_search_dp DEFINITION.
       END OF ts_ddic_view,
       tt_ddic_view_list TYPE STANDARD TABLE OF ts_ddic_view WITH EMPTY KEY. "TODO: rename
 
+
     METHODS get_abap_views
       IMPORTING db_table_name    TYPE vibastab
       RETURNING VALUE(view_list) TYPE tt_ddic_view_list
       RAISING   zcx_generic_exc.
+
+  PRIVATE SECTION.
+
+    TYPES ty_useinkeyuserapps_rng TYPE RANGE OF ts_ddic_view-c1_useinkeyuserapps.
+    TYPES ty_useincloudplatforms_rng TYPE RANGE OF ts_ddic_view-c1_useincloudplatform.
+
+    METHODS get_abap_views_by_ddl
+      IMPORTING db_table_name    TYPE vibastab
+      RETURNING VALUE(view_list) TYPE tt_ddic_view_list
+      RAISING   zcx_generic_exc.
+
+    METHODS get_abap_views_by_ddic
+      IMPORTING db_table_name    TYPE vibastab
+      RETURNING VALUE(view_list) TYPE tt_ddic_view_list
+      RAISING   zcx_generic_exc.
+
+    METHODS get_parameters
+      IMPORTING c1_useinkeyuserapps_rng    TYPE ty_useinkeyuserapps_rng
+                c1_useincloudplatforms_rng TYPE ty_useincloudplatforms_rng
+      RETURNING VALUE(r_where_text)        TYPE string.
 
 ENDCLASS.
 
@@ -468,17 +489,192 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
   METHOD get_abap_views.
 
+    "IF p_ddcddl = 'X'.
+
+    "view_list = get_abap_views_by_ddl( db_table_name ).
+
+    "ELSE.
+
+    view_list = get_abap_views_by_ddic( db_table_name ).
+
+    "ENDIF.
+
+  ENDMETHOD.
+
+  METHOD get_abap_views_by_ddl.
+
+    TYPES:
+      BEGIN OF ty_temp_parent_view,
+        ParentAbapViewName  TYPE ZSCV_AbapViewParent-ParentAbapViewName,
+        ParentAbapViewType  TYPE ZSCV_AbapViewParent-ParentAbapViewType,
+        ParentDdlSourceName TYPE ZSCV_AbapViewParent-ParentDdlSourceName,
+        ParentDdicViewName  TYPE ZSCV_AbapViewParent-ParentDdicViewName,
+      END OF ty_temp_parent_view,
+      tt_temp_parent_views TYPE SORTED TABLE OF ty_temp_parent_view
+        WITH UNIQUE KEY ParentAbapViewName.
+
+    DATA child_view_rng TYPE RANGE OF ZSCV_AbapViewParent-ChildAbapViewName.
+
+    child_view_rng = VALUE #(
+      ( sign = 'I'
+        option = 'EQ'
+        low = db_table_name )
+    ).
+
+    DATA hierarchy_level TYPE i.
+
+    WHILE 1 = 1.
+
+      hierarchy_level = hierarchy_level + 1.
+
+      zca_progress_bar=>static_set_text( |Hierarchy level: {  hierarchy_level } - Childs: { lines( child_view_rng ) }| ).
+
+      SELECT
+        FROM ZSCV_AbapViewParent( p_DdicCdsBasedOnDllResourceInd = 'X' )
+        FIELDS
+          ParentAbapViewName,
+          ParentAbapViewType,
+          ParentDdlSourceName,
+          ParentDdicViewName
+        WHERE ChildAbapViewName IN @child_view_rng
+        GROUP BY
+          ParentAbapViewName,
+          ParentAbapViewType,
+          ParentDdlSourceName,
+          ParentDdicViewName
+        INTO TABLE @DATA(level_parent_view_list).
+
+      SORT level_parent_view_list BY ParentAbapViewName.
+
+      REFRESH child_view_rng[].
+
+      DATA parent_view_list TYPE tt_temp_parent_views.
+
+      LOOP AT level_parent_view_list
+        ASSIGNING FIELD-SYMBOL(<level_parent_view>).
+
+        READ TABLE parent_view_list
+          WITH KEY ParentAbapViewName = <level_parent_view>-ParentAbapViewName
+          TRANSPORTING NO FIELDS.
+
+        IF sy-subrc <> 0.
+          INSERT <level_parent_view> INTO TABLE parent_view_list.
+
+          APPEND VALUE #(
+            sign = 'I'
+            option = 'EQ'
+            low = <level_parent_view>-ParentAbapViewName )
+            TO child_view_rng.
+        ENDIF.
+
+      ENDLOOP.
+
+      REFRESH level_parent_view_list[].
+
+      IF child_view_rng[] IS INITIAL.
+        EXIT.
+      ENDIF.
+
+    ENDWHILE.
+
+    LOOP AT parent_view_list
+      ASSIGNING FIELD-SYMBOL(<view>).
+
+      APPEND INITIAL LINE TO view_list
+        ASSIGNING FIELD-SYMBOL(<result_view>).
+
+      <result_view>-abapviewtype  = <view>-ParentAbapViewType.
+      <result_view>-ddlsourcename = <view>-ParentDdlSourceName.
+      <result_view>-ddicviewname  = <view>-parentddicviewname.
+
+    ENDLOOP.
+
+    EXIT.
+
+  ENDMETHOD.
+
+  METHOD get_abap_views_by_ddic.
+
     IF p_c1kapp = 'X'.
-      TYPES ty_useinkeyuserapps_rng TYPE RANGE OF ts_ddic_view-c1_useinkeyuserapps.
       DATA(c1_useinkeyuserapps_rng) = VALUE ty_useinkeyuserapps_rng(
         ( sign = 'I' option = 'EQ' low = 'X' )  ).
     ENDIF.
 
     IF p_c1abap  = 'X'.
-      TYPES ty_useincloudplatforms_rng TYPE RANGE OF ts_ddic_view-c1_useincloudplatform.
+
       DATA(c1_useincloudplatforms_rng) = VALUE ty_useincloudplatforms_rng(
         ( sign = 'I' option = 'EQ' low = 'X' )  ).
     ENDIF.
+
+    DATA where_text TYPE string.
+
+    where_text = get_parameters(
+      c1_useinkeyuserapps_rng     = c1_useinkeyuserapps_rng
+      c1_useincloudplatforms_rng  = c1_useincloudplatforms_rng ).
+
+    "-----------------------------------------------------------------------------------
+    "SELECT
+    "-----------------------------------------------------------------------------------
+    TRY.
+
+        SELECT
+           AbapView~AbapViewType,
+           AbapView~ddlsourcename,
+           \_cdsview-datacategory,
+           \_cdsview-embeddedanalyticsqueryind,
+
+           AbapView~DdicViewName,
+
+            \_cdsview\_status-c1_releasestate,
+            \_cdsview\_status-c1_useinkeyuserapps,
+            \_cdsview\_status-c1_useincloudplatform,
+
+            \_cdsview\_status-c2_releasestate,
+
+            \_CdsView-EndUserTextLabel,
+            \_CdsView-vdmviewtype,
+            \_CdsView-accesscontrolauthcheck,
+            \_CdsView-objectmodelusagetypedataclass,
+            \_CdsView-vdmlifecyclecontracttype,
+            \_CdsView-objectmodelcreateenabled,
+
+            \_cdsview-CreateUser AS Create_User_Name,
+            \_cdsview-CreateDate AS Create_Date
+
+            FROM
+              ZSCV_AbapViewByView(
+                  p_AbapViewName                 = @db_table_name,
+                  p_DdicCdsBasedOnDllResourceInd = ''
+                ) AS AbapView
+
+            WHERE
+              AbapView~AbapViewName IN @s_abapvw[] AND
+              AbapView~DdicViewName IN @s_ddicvw[] AND
+              \_cdsview-ddlsourcename           IN @s_ddlnm
+              AND
+              (where_text)
+
+              AND
+              \_cdsview-VdmViewType     IN @s_viewtp[] AND
+              \_cdsview-datacategory    IN @s_datcat[]
+
+          ORDER BY
+            \_cdsview-ddlsourcename,
+            AbapView~ddicviewname
+
+          INTO CORRESPONDING FIELDS OF TABLE @view_list.
+
+      CATCH cx_sy_open_sql_db INTO DATA(sy_open_sql_db_exc).
+
+        RAISE EXCEPTION TYPE zcx_generic_exc
+          EXPORTING
+            text = sy_open_sql_db_exc->get_text( ).
+
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD get_parameters.
 
     "-----------------------------------------------------------------------------------
     "Where clause
@@ -538,67 +734,7 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
     ENDIF.
 
-    DATA(where_text) = status_where_text.
-
-    "-----------------------------------------------------------------------------------
-    "SELECT
-    "-----------------------------------------------------------------------------------
-    TRY.
-
-        SELECT
-           AbapView~AbapViewType,
-           AbapView~ddlsourcename,
-           \_cdsview-datacategory,
-           \_cdsview-embeddedanalyticsqueryind,
-
-           AbapView~DdicViewName,
-
-            \_cdsview\_status-c1_releasestate,
-            \_cdsview\_status-c1_useinkeyuserapps,
-            \_cdsview\_status-c1_useincloudplatform,
-
-            \_cdsview\_status-c2_releasestate,
-
-            \_CdsView-EndUserTextLabel,
-            \_CdsView-vdmviewtype,
-            \_CdsView-accesscontrolauthcheck,
-            \_CdsView-objectmodelusagetypedataclass,
-            \_CdsView-vdmlifecyclecontracttype,
-            \_CdsView-objectmodelcreateenabled,
-
-            \_cdsview-CreateUser AS Create_User_Name,
-            \_cdsview-CreateDate AS Create_Date
-
-            FROM
-              ZSCV_AbapViewByView(
-                  p_AbapViewName                 = @db_table_name,
-                  p_DdicCdsBasedOnDllResourceInd = @p_ddcddl
-                ) AS AbapView
-
-            WHERE
-              AbapView~AbapViewName IN @s_abapvw[] AND
-              AbapView~DdicViewName IN @s_ddicvw[] AND
-              \_cdsview-ddlsourcename           IN @s_ddlnm
-              AND
-              (where_text)
-
-              AND
-              \_cdsview-VdmViewType     IN @s_viewtp[] AND
-              \_cdsview-datacategory    IN @s_datcat[]
-
-          ORDER BY
-            \_cdsview-ddlsourcename,
-            AbapView~ddicviewname
-
-          INTO CORRESPONDING FIELDS OF TABLE @view_list.
-
-      CATCH cx_sy_open_sql_db INTO DATA(sy_open_sql_db_exc).
-
-        RAISE EXCEPTION TYPE zcx_generic_exc
-          EXPORTING
-            text = sy_open_sql_db_exc->get_text( ).
-
-    ENDTRY.
+    r_where_text  = status_where_text.
 
   ENDMETHOD.
 
@@ -737,7 +873,7 @@ CLASS zscv_main_ctl IMPLEMENTATION.
 
         IF s_dbtab[] IS INITIAL.
           "DB tables/views field is empty.
-          MESSAGE text-200 TYPE 'I'.
+          MESSAGE TEXT-200 TYPE 'I'.
           RETURN.
         ENDIF.
 
@@ -788,11 +924,11 @@ CLASS zscv_main_ctl IMPLEMENTATION.
           IF sy-subrc <> 0.
             DATA(view_name) = <db_table>-table_name.
           ELSE.
-            IF p_ddcddc = 'X'.
-              view_name = <successor_view>-successor_ddic_view_name.
-            ELSE.
-              view_name = <successor_view>-successor_cds_view_name.
-            ENDIF.
+            "IF p_ddcddc = 'X'.
+            view_name = <successor_view>-successor_ddic_view_name.
+            "ELSE.
+            "view_name = <successor_view>-successor_cds_view_name.
+            "ENDIF.
           ENDIF.
 
           APPEND VALUE #( sign = 'I' option = 'EQ' low = view_name )
