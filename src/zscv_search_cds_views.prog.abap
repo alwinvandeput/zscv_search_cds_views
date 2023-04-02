@@ -1083,7 +1083,7 @@ CLASS zscv_main_ctl IMPLEMENTATION.
     CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
       EXPORTING
         i_callback_program      = sy-repid
-        i_callback_user_command = 'USER_COMMAND'
+        "i_callback_user_command = 'USER_COMMAND'
         it_fieldcat             = field_catalog[]
         is_layout               = layout
       TABLES
