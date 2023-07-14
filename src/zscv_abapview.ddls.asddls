@@ -7,7 +7,7 @@ define view ZSCV_AbapView
   as
 
   select from ZSCV_AbapViewUnion as AbapView
-  association [0..1] to ZSCV_CdsView as _CdsView         on  _CdsView.DdlSourceName = AbapView.AbapViewName
+  association [0..1] to ZSCV_CdsView as _CdsView         on  _CdsView.DdlSourceName = AbapView.DdlSourceName
 
   association [0..1] to dd25l        as _DevObjectHeader on  _DevObjectHeader.viewname = AbapView.AbapViewName
                                                          and _DevObjectHeader.as4local = 'A'
