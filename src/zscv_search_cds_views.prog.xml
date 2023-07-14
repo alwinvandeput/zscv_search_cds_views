@@ -74,25 +74,19 @@
     <item>
      <ID>I</ID>
      <KEY>011</KEY>
-     <ENTRY>View: DDic CDS use DDic name. Entity CDS use DDL source name.</ENTRY>
-     <LENGTH>70</LENGTH>
+     <ENTRY>For DDic CDS views use DDic name, not DDL source name.</ENTRY>
+     <LENGTH>100</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>012</KEY>
-     <ENTRY>Program SDDIC_DDLS_INDEX_ALL_SOURCES builts search index for Entity CDS.</ENTRY>
+     <ENTRY>Run once program SDDIC_DDLS_INDEX_ALL_SOURCES to update DDLS_RIS_INDEX.</ENTRY>
      <LENGTH>80</LENGTH>
     </item>
     <item>
      <ID>I</ID>
-     <KEY>100</KEY>
-     <ENTRY>Selection</ENTRY>
-     <LENGTH>30</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
      <KEY>101</KEY>
-     <ENTRY>DB Table Selection</ENTRY>
+     <ENTRY>Source Selection</ENTRY>
      <LENGTH>30</LENGTH>
     </item>
     <item>
@@ -145,14 +139,20 @@
     </item>
     <item>
      <ID>I</ID>
-     <KEY>110</KEY>
-     <ENTRY>DDic CDS view relation based on:</ENTRY>
-     <LENGTH>50</LENGTH>
+     <KEY>112</KEY>
+     <ENTRY>OData</ENTRY>
+     <LENGTH>80</LENGTH>
     </item>
     <item>
      <ID>I</ID>
-     <KEY>111</KEY>
-     <ENTRY>* DDL relation (DDLS_RIS_INDEX) might result in Memory error.</ENTRY>
+     <KEY>113</KEY>
+     <ENTRY>View types</ENTRY>
+     <LENGTH>80</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>114</KEY>
+     <ENTRY>Example: IPRODUCT, not I_PRODUCT</ENTRY>
      <LENGTH>80</LENGTH>
     </item>
     <item>
@@ -177,18 +177,6 @@
      <KEY>P_C1KAPP</KEY>
      <ENTRY>C1 In Key user app allowed</ENTRY>
      <LENGTH>34</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_DDCDDC</KEY>
-     <ENTRY>DDic relation (DD26S)</ENTRY>
-     <LENGTH>29</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_DDCDDL</KEY>
-     <ENTRY>DDL relation (DDLS_RIS_INDEX)*</ENTRY>
-     <LENGTH>38</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -217,8 +205,8 @@
     <item>
      <ID>S</ID>
      <KEY>S_DBTAB</KEY>
-     <ENTRY>DDic Table/View</ENTRY>
-     <LENGTH>23</LENGTH>
+     <ENTRY>Root Table / View</ENTRY>
+     <LENGTH>25</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -234,9 +222,63 @@
     </item>
     <item>
      <ID>S</ID>
+     <KEY>S_DOMNM</KEY>
+     <ENTRY>Domain Name (AND-filter)</ENTRY>
+     <LENGTH>32</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_DTELNM</KEY>
+     <ENTRY>Data Element Name (AND-filter)</ENTRY>
+     <LENGTH>38</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_FLDNM</KEY>
+     <ENTRY>Field Name (AND-filter)</ENTRY>
+     <LENGTH>31</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_ODATA</KEY>
+     <ENTRY>CDS @OData.publish ( X=true )</ENTRY>
+     <LENGTH>37</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_RAPODT</KEY>
+     <ENTRY>RAP Service Definition</ENTRY>
+     <LENGTH>30</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
      <KEY>S_VIEWTP</KEY>
      <ENTRY>VDM View Type</ENTRY>
      <LENGTH>21</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>VT_DDCDS</KEY>
+     <ENTRY>DDic CDS View</ENTRY>
+     <LENGTH>21</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>VT_DDVW</KEY>
+     <ENTRY>DDic View</ENTRY>
+     <LENGTH>17</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>VT_ENTCD</KEY>
+     <ENTRY>Entity CDS View</ENTRY>
+     <LENGTH>23</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>VT_TABLE</KEY>
+     <ENTRY>DDic Table</ENTRY>
+     <LENGTH>18</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

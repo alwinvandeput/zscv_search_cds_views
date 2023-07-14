@@ -20,13 +20,13 @@ define view ZSCV_DdicViewChildDdicView
       DdicViewRelation.as4vers,
 
       case
-        when _ParentDdlDependency.ddlname is null then 'DDic'
+        when _ParentDdlDependency.ddlname is null then 'DDic View'
         else 'DDic CDS' end        as ViewType, //Parent
 
       _ParentDdlDependency.ddlname as ParentDllResourceName,
 
       case
-        when _ChildDdlDependency.ddlname is null then 'DDic'
+        when _ChildDdlDependency.ddlname is null then 'DDic View'
         else 'DDic CDS' end        as ChildViewType
 }
 where

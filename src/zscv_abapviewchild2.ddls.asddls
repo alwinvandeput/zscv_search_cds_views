@@ -45,7 +45,7 @@ select from ZSCV_CdsViewChildCdsView as CdsViewParentChildRelation
         end
       else */
         case CdsViewParentChildRelation.ChildAbapViewType
-          when 'DDic'       then CdsViewParentChildRelation.ChildDdicViewName
+          when 'DDic View'       then CdsViewParentChildRelation.ChildDdicViewName
           when 'DDic CDS'   then CdsViewParentChildRelation.ChildDdicViewName
           else CdsViewParentChildRelation.ChildDdlResourceName
         end  as ChildAbapViewName,
@@ -61,8 +61,7 @@ select from ZSCV_CdsViewChildCdsView as CdsViewParentChildRelation
       CdsViewParentChildRelation.ChildDdlResourceName  as ChildDdlResourceName
 
 }
-//Do not show the DDic
+
 where
-//     $parameters.p_DdicCdsBasedOnDllResourceInd    = 'X'
-//  or 
+  //Do not show the DDic relation
   CdsViewParentChildRelation.ParentDdicViewName is null
