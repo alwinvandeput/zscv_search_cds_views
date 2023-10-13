@@ -16,13 +16,7 @@ define view entity ZSCV_AbapViewByViewGroupBy
                  p_AbapViewName                  : $parameters.p_AbapViewName,
                  p_DdicCdsBasedOnDllResourceInd  : $parameters.p_DdicCdsBasedOnDllResourceInd) as AbapViewHier
 {
-  key AbapViewName  as AbapViewName,
-      AbapViewType  as AbapViewType,
-      DdlSourceName as DdlSourceName,
-      DdicViewName  as DdicViewName
+  key AbapViewName  as AbapViewName
 }
 group by
-  AbapViewName,
-  AbapViewType,
-  DdlSourceName,
-  DdicViewName
+  AbapViewName

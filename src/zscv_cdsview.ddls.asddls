@@ -19,7 +19,7 @@ define view ZSCV_CdsView
 {
 
   key DdlSource.obj_name                                             as DdlSourceName,
-      ''                                                             as DdicViewName,
+      DdlToDdicLink.objectname                                                 as DdicViewName,
 
       //Child: DDic, DDic CDS, Entity CDS
       case

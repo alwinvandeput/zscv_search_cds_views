@@ -20,7 +20,7 @@ define view entity ZSCV_EntityCdsViewAliasField
 
   select from  dd03nd       as Field
     inner join ZSCV_CdsView as CdsView on  CdsView.DdlSourceName = Field.strucobjn
-                                       and CdsView.AbapViewType  = 'Entity CDS'
+                                       //and CdsView.AbapViewType  = 'Entity CDS'
 {
   key Field.strucobjn as DdlSourceName,
   key Field.fieldname as FieldName,  

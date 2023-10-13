@@ -11,8 +11,8 @@ define view ZSCV_AbapViewAliasField
   key AbapViewType,
   key TableName as AbapViewName,
   key FieldName as FieldName,
-  DataElementName,
-  DomainName
+      DataElementName,
+      DomainName
 }
 
 union all
@@ -21,14 +21,44 @@ union all
 select from ZSCV_DdicViewAliasField
 {
   key AbapViewType as AbapViewType,
-  key Tabname as AbapViewName,
-  key Fieldname as FieldName,
-  DataElementName,
-  DomainName
+  key Tabname      as AbapViewName,
+  key Fieldname    as FieldName,
+      DataElementName,
+      DomainName
 }
 
 union all
 
+//Entity CDS View Alias Field
+select from       ZSCV_CdsViewSourceField as Field
+  left outer join dd03l                   as DdicField on  DdicField.tabname = Field.AbapViewType
+                                                       and DdicField.tabname = Field.AbapViewName
+
+{
+  key Field.AbapViewType,
+  key Field.AbapViewName as AbapViewName,
+  key Field.Field        as FieldName,
+      DdicField.rollname as DataElementName,
+      DdicField.domname  as DomainName
+}
+where
+  Field.AbapViewType = 'DDic CDS'
+
+union all
+
+//DDic and Entity CDS View Alias Field
+select from ZSCV_CdsViewSourceField
+{
+  key AbapViewType,
+  key AbapViewName as AbapViewName,
+  key Field        as FieldName,
+      ''           as DataElementName,
+      ''           as DomainName
+}
+where
+  AbapViewType = 'Entity CDS'
+
+/*
 //Entity CDS View Alias Field
 select from ZSCV_EntityCdsViewAliasField
 {
@@ -38,3 +68,4 @@ select from ZSCV_EntityCdsViewAliasField
   DataElementName,
   DomainName
 }
+*/

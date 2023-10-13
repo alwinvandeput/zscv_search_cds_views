@@ -13,10 +13,14 @@ define view entity ZSCV_CdsViewSourceField
   select from  ddls_ris_index as Field
     inner join ZSCV_CdsView   as CdsView on CdsView.DdlSourceName = Field.ddlsrc_name
 {
-  key   Field.ddlsrc_name            as DdlSourceName,
+  key   CdsView.DdlSourceName        as DdlSourceName,
 
-  key
-        SUBSTRING(
+  key   case
+          when CdsView.AbapViewType = 'Entity CDS'  then CdsView.DdlSourceName
+          else  CdsView.DdicViewName
+        end                          as AbapViewName,
+
+  key   SUBSTRING(
           Field.used_artifact_fullname,
           5,
           INSTR(
@@ -24,10 +28,10 @@ define view entity ZSCV_CdsViewSourceField
           )                          as ViewName,
 
   key   SUBSTRING(
-    Field.used_artifact_fullname,
-    INSTR(
-      SUBSTRING(Field.used_artifact_fullname, 5, 100), '\\TY:') + 8 ,
-    100)                             as Field,
+            Field.used_artifact_fullname,
+            INSTR(
+              SUBSTRING(Field.used_artifact_fullname, 5, 100), '\\TY:') + 8 ,
+            100)                     as Field,
 
         Field.used_artifact_fullname as FullFieldName,
 
