@@ -7,6 +7,9 @@
   sizeCategory: #S,
   dataClass: #MIXED
 }
+
+//THIS VIEW IS NOT USED!!
+
 define view entity ZSCV_CdsViewSourceField
   as
 
@@ -20,18 +23,21 @@ define view entity ZSCV_CdsViewSourceField
           else  CdsView.DdicViewName
         end                          as AbapViewName,
 
-  key   SUBSTRING(
-          Field.used_artifact_fullname,
-          5,
-          INSTR(
-            SUBSTRING(Field.used_artifact_fullname, 5, 100), '\\TY:') - 1
-          )                          as ViewName,
+        //  key   SUBSTRING(
+        //          Field.used_artifact_fullname,
+        //          5,
+        //          INSTR(
+        //            SUBSTRING(Field.used_artifact_fullname, 5, 100), '\\TY:') - 1
+        //          )                          as ViewName,
+  key   ''                           as ViewName,
 
-  key   SUBSTRING(
-            Field.used_artifact_fullname,
-            INSTR(
-              SUBSTRING(Field.used_artifact_fullname, 5, 100), '\\TY:') + 8 ,
-            100)                     as Field,
+        //  key   SUBSTRING(
+        //            Field.used_artifact_fullname,
+        //            INSTR(
+        //              SUBSTRING(Field.used_artifact_fullname, 5, 100), '\\TY:') + 8 ,
+        //            100)                     as Field,
+
+  key   ''                           as Field,
 
         Field.used_artifact_fullname as FullFieldName,
 

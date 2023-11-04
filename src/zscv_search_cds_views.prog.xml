@@ -80,7 +80,7 @@
     <item>
      <ID>I</ID>
      <KEY>012</KEY>
-     <ENTRY>Run once program SDDIC_DDLS_INDEX_ALL_SOURCES to update DDLS_RIS_INDEX.</ENTRY>
+     <ENTRY>Run once program ZSCV_FILL_CDS_RELATIONS.</ENTRY>
      <LENGTH>80</LENGTH>
     </item>
     <item>

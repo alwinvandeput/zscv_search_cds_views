@@ -43,6 +43,8 @@ select from ZSCV_DdicView
       CdsViewInd    as DdicCdsViewInd,
       ''            as EntityCdsViewInd
 }
+where
+  CdsViewInd = ''
 
 union all
 
@@ -51,12 +53,18 @@ select from ZSCV_CdsView
   key DdlSourceName as AbapViewName,
       AbapViewType,
 
-      ''            as DdicViewName,
+      DdicViewName  as DdicViewName,
       DdlSourceName as DdlSourceName,
 
       ''            as DdicTableInd,
       ''            as DdicViewInd,
-      ''            as DdicCdsViewInd,
-      'X'           as EntityCdsViewInd
+      case
+        when AbapViewType = 'DDic CDS' then 'X'
+        else ''
+        end         as DdicCdsViewInd,
+      case
+        when AbapViewType = 'Entity CDS' then 'X'
+        else ''
+        end         as EntityCdsViewInd
 }
-where AbapViewType = 'Entity CDS'
+//where AbapViewType = 'Entity CDS'

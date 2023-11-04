@@ -3,7 +3,7 @@
 {
 "FROM":
 [
-"DDLS_RIS_INDEX"
+"ZSCV_CDS_REL"
 ],
 "ASSOCIATED":
 [],

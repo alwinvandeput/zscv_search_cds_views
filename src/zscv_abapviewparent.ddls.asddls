@@ -13,14 +13,14 @@ define view entity ZSCV_AbapViewParent
 
   as
 
-  select from ZSCV_AbapViewChild2(p_DdicCdsBasedOnDllResourceInd : $parameters.p_DdicCdsBasedOnDllResourceInd)
+  select from ZSCV_AbapViewChild2
   association [1..*] to ZSCV_AbapViewParent as _Parent on $projection.ChildAbapViewName = _Parent.ParentAbapViewName
 {
   key ParentAbapViewName as ParentAbapViewName,
   key ChildAbapViewName as ChildAbapViewName,
   
      ParentAbapViewType,
-     ParentDllResourceName as ParentDdlSourceName,
+     //ParentDllResourceName as ParentDdlSourceName,
      ParentDdicViewName,  
   
       /* Associations */

@@ -36,31 +36,16 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
     DATA db_view_name_type TYPE vibastab.
     SELECT-OPTIONS s_dbtab FOR db_view_name_type.
 
-    SELECTION-SCREEN BEGIN OF LINE.
-      SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(70) TEXT-011.
-    SELECTION-SCREEN END OF LINE.
+*    SELECTION-SCREEN SKIP.
 
-    SELECTION-SCREEN BEGIN OF LINE.
-      SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(70) TEXT-114.
-    SELECTION-SCREEN END OF LINE.
-
-    SELECTION-SCREEN BEGIN OF LINE.
-      SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(75) TEXT-012.
-    SELECTION-SCREEN END OF LINE.
-
-    SELECTION-SCREEN SKIP.
-
-    DATA db_field_name_type TYPE fieldname.
-    SELECT-OPTIONS s_fldnm FOR db_view_name_type NO INTERVALS.
-
-    DATA db_data_element_name_type TYPE rollname.
-    SELECT-OPTIONS s_dtelnm FOR db_data_element_name_type NO INTERVALS.
-
-    DATA db_domain_name_type TYPE domname.
-    SELECT-OPTIONS s_domnm FOR db_domain_name_type NO INTERVALS.
+*    DATA db_field_name_type TYPE fieldname.
+*    SELECT-OPTIONS s_fldnm FOR db_view_name_type NO INTERVALS.
+*
+*    DATA db_data_element_name_type TYPE rollname.
+*    SELECT-OPTIONS s_dtelnm FOR db_data_element_name_type NO INTERVALS.
+*
+*    DATA db_domain_name_type TYPE domname.
+*    SELECT-OPTIONS s_domnm FOR db_domain_name_type NO INTERVALS.
 
   SELECTION-SCREEN END OF BLOCK dbtab.
 
@@ -594,10 +579,10 @@ CLASS zscv_view_search_dp DEFINITION.
       RETURNING VALUE(view_list) TYPE tt_ddic_view_list
       RAISING   zcx_generic_exc.
 
-    METHODS _get_abap_views_by_ddl
-      IMPORTING db_table_name    TYPE vibastab
-      RETURNING VALUE(view_list) TYPE tt_ddic_view_list
-      RAISING   zcx_generic_exc.
+*    METHODS _get_abap_views_by_ddl
+*      IMPORTING db_table_name    TYPE vibastab
+*      RETURNING VALUE(view_list) TYPE tt_ddic_view_list
+*      RAISING   zcx_generic_exc.
 
     METHODS _get_views_by_source_name2
       IMPORTING db_table_name    TYPE vibastab
@@ -767,134 +752,134 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
   METHOD _get_views_by_field_names2.
 
-    IF s_fldnm[] IS NOT INITIAL.
-      SELECT
-        FROM ZSCV_AbapViewAliasField AS Field
-        FIELDS
-          Field~AbapViewName,
-          Field~FieldName,
-          Field~DataElementName,
-          Field~DomainName
-        WHERE
-          Field~AbapViewName IN @view_rng[] AND
-          FieldName          IN @s_fldnm[]
-        INTO TABLE @DATA(temp_filtered_views).
-    ENDIF.
+*    IF s_fldnm[] IS NOT INITIAL.
+*      SELECT
+*        FROM ZSCV_AbapViewAliasField AS Field
+*        FIELDS
+*          Field~AbapViewName,
+*          Field~FieldName,
+*          Field~DataElementName,
+*          Field~DomainName
+*        WHERE
+*          Field~AbapViewName IN @view_rng[] AND
+*          FieldName          IN @s_fldnm[]
+*        INTO TABLE @DATA(temp_filtered_views).
+*    ENDIF.
+*
+*    IF s_dtelnm[] IS NOT INITIAL.
+*      SELECT
+*        FROM ZSCV_AbapViewAliasField AS Field
+*        FIELDS
+*          Field~AbapViewName,
+*          Field~FieldName,
+*          Field~DataElementName,
+*          Field~DomainName
+*        WHERE
+*          Field~AbapViewName IN @view_rng[] AND
+*          DataElementName IN @s_dtelnm[]
+*        APPENDING TABLE @temp_filtered_views.
+*    ENDIF.
+*
+*    IF s_domnm[] IS NOT INITIAL.
+*      SELECT
+*        FROM ZSCV_AbapViewAliasField AS Field
+*        FIELDS
+*          Field~AbapViewName,
+*          Field~FieldName,
+*          Field~DataElementName,
+*          Field~DomainName
+*        WHERE
+*          Field~AbapViewName IN @view_rng[] AND
+*          DomainName      IN @s_domnm[]
+*          APPENDING TABLE @temp_filtered_views.
+*    ENDIF.
+*
+*    DATA selected_view_list TYPE t_view_range.
+*
+*    LOOP AT temp_filtered_views
+*      INTO DATA(view_field)
+*      GROUP BY view_field-AbapViewName.
+*
+*      APPEND VALUE #(
+*        sign = 'I'
+*        option = 'EQ'
+*        low = view_field-AbapViewName )
+*        TO selected_view_list.
+*
+*    ENDLOOP.
+*
+*    LOOP AT selected_view_list
+*      ASSIGNING FIELD-SYMBOL(<selected_view>).
+*
+*      DATA(ViewName) = <selected_view>-low.
 
-    IF s_dtelnm[] IS NOT INITIAL.
-      SELECT
-        FROM ZSCV_AbapViewAliasField AS Field
-        FIELDS
-          Field~AbapViewName,
-          Field~FieldName,
-          Field~DataElementName,
-          Field~DomainName
-        WHERE
-          Field~AbapViewName IN @view_rng[] AND
-          DataElementName IN @s_dtelnm[]
-        APPENDING TABLE @temp_filtered_views.
-    ENDIF.
+*      DATA(all_fields_found_ind) = abap_true.
+*
+*      LOOP AT s_fldnm ASSIGNING FIELD-SYMBOL(<field>).
+*
+*        DATA field_one_field_rng LIKE s_fldnm[].
+*
+*        REFRESH field_one_field_rng.
+*        APPEND <field> TO field_one_field_rng.
+*
+*        LOOP AT temp_filtered_views
+*          ASSIGNING FIELD-SYMBOL(<dummy>)
+*          WHERE
+*            AbapViewName =  ViewName AND
+*            FieldName    IN field_one_field_rng.
+*        ENDLOOP.
+*
+*        IF sy-subrc <> 0.
+*          all_fields_found_ind = abap_false.
+*        ENDIF.
+*
+*      ENDLOOP.
 
-    IF s_domnm[] IS NOT INITIAL.
-      SELECT
-        FROM ZSCV_AbapViewAliasField AS Field
-        FIELDS
-          Field~AbapViewName,
-          Field~FieldName,
-          Field~DataElementName,
-          Field~DomainName
-        WHERE
-          Field~AbapViewName IN @view_rng[] AND
-          DomainName      IN @s_domnm[]
-          APPENDING TABLE @temp_filtered_views.
-    ENDIF.
+*      LOOP AT s_dtelnm ASSIGNING FIELD-SYMBOL(<DataElementName>).
+*
+*        DATA DataElementName_rng LIKE s_dtelnm[].
+*
+*        REFRESH DataElementName_rng.
+*        APPEND <DataElementName> TO DataElementName_rng.
+*
+*        LOOP AT temp_filtered_views
+*          ASSIGNING FIELD-SYMBOL(<dummy2>)
+*          WHERE
+*            AbapViewName     =  ViewName AND
+*            DataElementName  IN DataElementName_rng.
+*        ENDLOOP.
+*
+*        IF sy-subrc <> 0.
+*          all_fields_found_ind = abap_false.
+*        ENDIF.
+*
+*      ENDLOOP.
 
-    DATA selected_view_list TYPE t_view_range.
+*      LOOP AT s_domnm ASSIGNING FIELD-SYMBOL(<DomainName>).
+*
+*        DATA DomainName_rng LIKE s_domnm[].
+*
+*        REFRESH DomainName_rng.
+*        APPEND <DomainName> TO DomainName_rng.
+*
+*        LOOP AT temp_filtered_views
+*          ASSIGNING FIELD-SYMBOL(<dummy3>)
+*          WHERE
+*            AbapViewName  =  ViewName AND
+*            DomainName    IN DomainName_rng.
+*        ENDLOOP.
+*
+*        IF sy-subrc <> 0.
+*          all_fields_found_ind = abap_false.
+*        ENDIF.
+*
+*      ENDLOOP.
 
-    LOOP AT temp_filtered_views
-      INTO DATA(view_field)
-      GROUP BY view_field-AbapViewName.
+*      IF all_fields_found_ind = abap_true.
+*        APPEND <selected_view> TO view_range.
+*      ENDIF.
 
-      APPEND VALUE #(
-        sign = 'I'
-        option = 'EQ'
-        low = view_field-AbapViewName )
-        TO selected_view_list.
-
-    ENDLOOP.
-
-    LOOP AT selected_view_list
-      ASSIGNING FIELD-SYMBOL(<selected_view>).
-
-      DATA(ViewName) = <selected_view>-low.
-
-      DATA(all_fields_found_ind) = abap_true.
-
-      LOOP AT s_fldnm ASSIGNING FIELD-SYMBOL(<field>).
-
-        DATA field_one_field_rng LIKE s_fldnm[].
-
-        REFRESH field_one_field_rng.
-        APPEND <field> TO field_one_field_rng.
-
-        LOOP AT temp_filtered_views
-          ASSIGNING FIELD-SYMBOL(<dummy>)
-          WHERE
-            AbapViewName =  ViewName AND
-            FieldName    IN field_one_field_rng.
-        ENDLOOP.
-
-        IF sy-subrc <> 0.
-          all_fields_found_ind = abap_false.
-        ENDIF.
-
-      ENDLOOP.
-
-      LOOP AT s_dtelnm ASSIGNING FIELD-SYMBOL(<DataElementName>).
-
-        DATA DataElementName_rng LIKE s_dtelnm[].
-
-        REFRESH DataElementName_rng.
-        APPEND <DataElementName> TO DataElementName_rng.
-
-        LOOP AT temp_filtered_views
-          ASSIGNING FIELD-SYMBOL(<dummy2>)
-          WHERE
-            AbapViewName     =  ViewName AND
-            DataElementName  IN DataElementName_rng.
-        ENDLOOP.
-
-        IF sy-subrc <> 0.
-          all_fields_found_ind = abap_false.
-        ENDIF.
-
-      ENDLOOP.
-
-      LOOP AT s_domnm ASSIGNING FIELD-SYMBOL(<DomainName>).
-
-        DATA DomainName_rng LIKE s_domnm[].
-
-        REFRESH DomainName_rng.
-        APPEND <DomainName> TO DomainName_rng.
-
-        LOOP AT temp_filtered_views
-          ASSIGNING FIELD-SYMBOL(<dummy3>)
-          WHERE
-            AbapViewName  =  ViewName AND
-            DomainName    IN DomainName_rng.
-        ENDLOOP.
-
-        IF sy-subrc <> 0.
-          all_fields_found_ind = abap_false.
-        ENDIF.
-
-      ENDLOOP.
-
-      IF all_fields_found_ind = abap_true.
-        APPEND <selected_view> TO view_range.
-      ENDIF.
-
-    ENDLOOP.
+*    ENDLOOP.
 
   ENDMETHOD.
 
@@ -902,107 +887,107 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
     view_list = _get_views_by_source_name2( db_table_name ).
 
-    IF s_fldnm[] IS NOT INITIAL OR
-       s_dtelnm[] IS NOT INITIAL OR
-       s_domnm[] IS NOT INITIAL.
-
-      view_list = _filter_views_by_fields( view_list ).
-
-    ENDIF.
-
-  ENDMETHOD.
-
-  METHOD _get_abap_views_by_ddl.
-
-    TYPES:
-      BEGIN OF ty_temp_parent_view,
-        ParentAbapViewName  TYPE ZSCV_AbapViewParent-ParentAbapViewName,
-        ParentAbapViewType  TYPE ZSCV_AbapViewParent-ParentAbapViewType,
-        ParentDdlSourceName TYPE ZSCV_AbapViewParent-ParentDdlSourceName,
-        ParentDdicViewName  TYPE ZSCV_AbapViewParent-ParentDdicViewName,
-      END OF ty_temp_parent_view,
-      tt_temp_parent_views TYPE SORTED TABLE OF ty_temp_parent_view
-        WITH UNIQUE KEY ParentAbapViewName.
-
-    DATA child_view_rng TYPE RANGE OF ZSCV_AbapViewParent-ChildAbapViewName.
-
-    child_view_rng = VALUE #(
-      ( sign = 'I'
-        option = 'EQ'
-        low = db_table_name )
-    ).
-
-    DATA hierarchy_level TYPE i.
-
-    WHILE 1 = 1.
-
-      hierarchy_level = hierarchy_level + 1.
-
-      zca_progress_bar=>static_set_text( |Hierarchy level: {  hierarchy_level } - Childs: { lines( child_view_rng ) }| ).
-
-      SELECT
-        FROM ZSCV_AbapViewParent( p_DdicCdsBasedOnDllResourceInd = 'X' )
-        FIELDS
-          ParentAbapViewName,
-          ParentAbapViewType,
-          ParentDdlSourceName,
-          ParentDdicViewName
-        WHERE ChildAbapViewName IN @child_view_rng
-        GROUP BY
-          ParentAbapViewName,
-          ParentAbapViewType,
-          ParentDdlSourceName,
-          ParentDdicViewName
-        INTO TABLE @DATA(level_parent_view_list).
-
-      SORT level_parent_view_list BY ParentAbapViewName.
-
-      REFRESH child_view_rng[].
-
-      DATA parent_view_list TYPE tt_temp_parent_views.
-
-      LOOP AT level_parent_view_list
-        ASSIGNING FIELD-SYMBOL(<level_parent_view>).
-
-        READ TABLE parent_view_list
-          WITH KEY ParentAbapViewName = <level_parent_view>-ParentAbapViewName
-          TRANSPORTING NO FIELDS.
-
-        IF sy-subrc <> 0.
-          INSERT <level_parent_view> INTO TABLE parent_view_list.
-
-          APPEND VALUE #(
-            sign = 'I'
-            option = 'EQ'
-            low = <level_parent_view>-ParentAbapViewName )
-            TO child_view_rng.
-        ENDIF.
-
-      ENDLOOP.
-
-      REFRESH level_parent_view_list[].
-
-      IF child_view_rng[] IS INITIAL.
-        EXIT.
-      ENDIF.
-
-    ENDWHILE.
-
-    LOOP AT parent_view_list
-      ASSIGNING FIELD-SYMBOL(<view>).
-
-      APPEND INITIAL LINE TO view_list
-        ASSIGNING FIELD-SYMBOL(<result_view>).
-
-      <result_view>-abapviewtype  = <view>-ParentAbapViewType.
-      <result_view>-ddlsourcename = <view>-ParentDdlSourceName.
-      <result_view>-ddicviewname  = <view>-parentddicviewname.
-
-    ENDLOOP.
-
-    EXIT.
+*    IF s_fldnm[] IS NOT INITIAL OR
+*       s_dtelnm[] IS NOT INITIAL OR
+*       s_domnm[] IS NOT INITIAL.
+*
+*      view_list = _filter_views_by_fields( view_list ).
+*
+*    ENDIF.
 
   ENDMETHOD.
+
+*  METHOD _get_abap_views_by_ddl.
+*
+*    TYPES:
+*      BEGIN OF ty_temp_parent_view,
+*        ParentAbapViewName  TYPE ZSCV_AbapViewParent-ParentAbapViewName,
+*        ParentAbapViewType  TYPE ZSCV_AbapViewParent-ParentAbapViewType,
+*        ParentDdlSourceName TYPE ZSCV_AbapViewParent-ParentDdlSourceName,
+*        ParentDdicViewName  TYPE ZSCV_AbapViewParent-ParentDdicViewName,
+*      END OF ty_temp_parent_view,
+*      tt_temp_parent_views TYPE SORTED TABLE OF ty_temp_parent_view
+*        WITH UNIQUE KEY ParentAbapViewName.
+*
+*    DATA child_view_rng TYPE RANGE OF ZSCV_AbapViewParent-ChildAbapViewName.
+*
+*    child_view_rng = VALUE #(
+*      ( sign = 'I'
+*        option = 'EQ'
+*        low = db_table_name )
+*    ).
+*
+*    DATA hierarchy_level TYPE i.
+*
+*    WHILE 1 = 1.
+*
+*      hierarchy_level = hierarchy_level + 1.
+*
+*      zca_progress_bar=>static_set_text( |Hierarchy level: {  hierarchy_level } - Childs: { lines( child_view_rng ) }| ).
+*
+*      SELECT
+*        FROM ZSCV_AbapViewParent( p_DdicCdsBasedOnDllResourceInd = 'X' )
+*        FIELDS
+*          ParentAbapViewName,
+*          ParentAbapViewType,
+*          ParentDdlSourceName,
+*          ParentDdicViewName
+*        WHERE ChildAbapViewName IN @child_view_rng
+*        GROUP BY
+*          ParentAbapViewName,
+*          ParentAbapViewType,
+*          ParentDdlSourceName,
+*          ParentDdicViewName
+*        INTO TABLE @DATA(level_parent_view_list).
+*
+*      SORT level_parent_view_list BY ParentAbapViewName.
+*
+*      REFRESH child_view_rng[].
+*
+*      DATA parent_view_list TYPE tt_temp_parent_views.
+*
+*      LOOP AT level_parent_view_list
+*        ASSIGNING FIELD-SYMBOL(<level_parent_view>).
+*
+*        READ TABLE parent_view_list
+*          WITH KEY ParentAbapViewName = <level_parent_view>-ParentAbapViewName
+*          TRANSPORTING NO FIELDS.
+*
+*        IF sy-subrc <> 0.
+*          INSERT <level_parent_view> INTO TABLE parent_view_list.
+*
+*          APPEND VALUE #(
+*            sign = 'I'
+*            option = 'EQ'
+*            low = <level_parent_view>-ParentAbapViewName )
+*            TO child_view_rng.
+*        ENDIF.
+*
+*      ENDLOOP.
+*
+*      REFRESH level_parent_view_list[].
+*
+*      IF child_view_rng[] IS INITIAL.
+*        EXIT.
+*      ENDIF.
+*
+*    ENDWHILE.
+*
+*    LOOP AT parent_view_list
+*      ASSIGNING FIELD-SYMBOL(<view>).
+*
+*      APPEND INITIAL LINE TO view_list
+*        ASSIGNING FIELD-SYMBOL(<result_view>).
+*
+*      <result_view>-abapviewtype  = <view>-ParentAbapViewType.
+*      <result_view>-ddlsourcename = <view>-ParentDdlSourceName.
+*      <result_view>-ddicviewname  = <view>-parentddicviewname.
+*
+*    ENDLOOP.
+*
+*    EXIT.
+*
+*  ENDMETHOD.
 
   METHOD _get_views_by_source_name2.
 
@@ -1050,8 +1035,7 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
             FROM
               ZSCV_AbapViewByView(
-                  p_AbapViewName                 = @db_table_name,
-                  p_DdicCdsBasedOnDllResourceInd = ''
+                  p_AbapViewName                 = @db_table_name
                 ) AS AbapView
 
             WHERE
@@ -1478,13 +1462,13 @@ CLASS zscv_main_ctl IMPLEMENTATION.
               view_list = view_search_dp->get_views_by_source_names(  ).
 
 
-            ELSEIF
-              s_fldnm[] IS NOT INITIAL OR
-              s_dtelnm[] IS NOT INITIAL OR
-              s_domnm[] IS NOT INITIAL.
-
-              view_search_dp = NEW zscv_view_search_dp( ).
-              view_list = view_search_dp->get_views_by_field_names(  ).
+*            ELSEIF
+*              s_fldnm[] IS NOT INITIAL OR
+*              s_dtelnm[] IS NOT INITIAL OR
+*              s_domnm[] IS NOT INITIAL.
+*
+*              view_search_dp = NEW zscv_view_search_dp( ).
+*              view_list = view_search_dp->get_views_by_field_names(  ).
 
             ELSE.
 

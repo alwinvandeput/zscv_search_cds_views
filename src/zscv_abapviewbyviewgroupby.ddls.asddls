@@ -9,14 +9,14 @@
 }
 define view entity ZSCV_AbapViewByViewGroupBy
   with parameters
-    p_AbapViewName                 :vibastab,
-    p_DdicCdsBasedOnDllResourceInd :abap_boolean
+    p_AbapViewName                 :vibastab
 
   as select from ZSCV_AbapViewHier(
-                 p_AbapViewName                  : $parameters.p_AbapViewName,
-                 p_DdicCdsBasedOnDllResourceInd  : $parameters.p_DdicCdsBasedOnDllResourceInd) as AbapViewHier
+                 p_AbapViewName                  : $parameters.p_AbapViewName )
 {
+  key AbapViewType  as AbapViewType,
   key AbapViewName  as AbapViewName
 }
 group by
+  AbapViewType,
   AbapViewName
