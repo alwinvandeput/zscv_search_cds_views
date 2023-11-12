@@ -3,7 +3,7 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZSCV_FILL_CDS_RELATIONS.
+REPORT zscv_cds_relation_indexer.
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "Selection screen
@@ -53,6 +53,22 @@ CLASS lcl_cds_parent_child_indexer DEFINITION.
     METHODS append_statement_ast
       IMPORTING ir_statement_ast TYPE REF TO cl_qlast_ddlstmt.
 
+    CONSTANTS:
+      BEGIN OF gcs_relation_types,
+        view TYPE trobjtype VALUE 'VIEW',
+      END OF gcs_relation_types.
+
+    CONSTANTS:
+      BEGIN OF gcs_index_run_status,
+        running   TYPE char10 VALUE 'RUNNING',
+        completed TYPE char10 VALUE 'COMPLETED',
+      END OF gcs_index_run_status.
+
+    METHODS update_run_index
+      IMPORTING
+        iv_relation_type TYPE trobjtype
+        iv_status        TYPE char10.
+
 ENDCLASS.
 
 CLASS lcl_cds_parent_child_indexer IMPLEMENTATION.
@@ -65,13 +81,19 @@ CLASS lcl_cds_parent_child_indexer IMPLEMENTATION.
 
   METHOD execute.
 
+    zscv_basic_view_relation_bo=>fill_db_table_initially( ).
+
     IF p_refrsh = abap_true.
 
-      DELETE FROM zscv_cds_rel. "#EC CI_NOWHERE
+      DELETE FROM zscv_cds_rel.                         "#EC CI_NOWHERE
 
       COMMIT WORK.
 
     ENDIF.
+
+    update_run_index(
+      iv_relation_type = gcs_relation_types-view
+      iv_status        = gcs_index_run_status-running ).
 
     SELECT ddlname
       FROM ddddlsrc
@@ -84,16 +106,26 @@ CLASS lcl_cds_parent_child_indexer IMPLEMENTATION.
 
       gv_parent_ddl_name = <lv_ddl_name>-ddlname.
 
-      cl_progress_indicator=>progress_indicate(
-        EXPORTING
-          i_text               = |{ sy-tabix } / { lines( lt_ddl_names ) } - { gv_parent_ddl_name }|
-          i_processed          = sy-tabix
-          i_total              = lines( lt_ddl_names )
-          i_output_immediately = abap_false ).
+      IF sy-batch = abap_false.
+
+        cl_progress_indicator=>progress_indicate(
+          EXPORTING
+            i_text               = |{ sy-tabix } / { lines( lt_ddl_names ) } - { gv_parent_ddl_name }|
+            i_processed          = sy-tabix
+            i_total              = lines( lt_ddl_names )
+            i_output_immediately = abap_false ).
+
+      ENDIF.
 
       TRY.
 
-          DATA(lr_ddl_abstract_syntax_tree) = cl_qlast_utility=>get_ast_for_active_ddls( <lv_ddl_name>-ddlname ).
+          "Not available on S/4HANA 2020
+          "DATA(lr_ddl_abstract_syntax_tree) = cl_qlast_utility=>get_ast_for_active_ddls( <lv_ddl_name>-ddlname ).
+
+          "Now compatible with S/4HANA 2020
+          DATA(lr_ddl_abstract_syntax_tree) = cl_qlast_utility=>get_ast_for_ddls(
+            i_ddlsname = <lv_ddl_name>-ddlname
+            i_version = if_dd_sobject_constants=>get_a ).
 
           append_statement_ast( lr_ddl_abstract_syntax_tree ).
 
@@ -105,6 +137,47 @@ CLASS lcl_cds_parent_child_indexer IMPLEMENTATION.
       ENDTRY.
 
     ENDLOOP.
+
+    update_run_index(
+      iv_relation_type = gcs_relation_types-view
+      iv_status        = gcs_index_run_status-completed ).
+
+  ENDMETHOD.
+
+  METHOD update_run_index.
+
+    IF s_cds[] IS INITIAL.
+
+      SELECT SINGLE
+        FROM zscv_cds_rel_run
+        FIELDS *
+        WHERE relation_type = @iv_relation_type
+        INTO @DATA(ls_update_index_run).
+
+      IF sy-subrc <> 0.
+
+        ls_update_index_run =
+          VALUE zscv_cds_rel_run(
+            relation_type = iv_relation_type
+            sap_release   = sy-saprl
+            status        = iv_status
+          ).
+
+        INSERT zscv_cds_rel_run
+          FROM ls_update_index_run.
+
+      ELSE.
+
+        ls_update_index_run-status = iv_status.
+
+        UPDATE zscv_cds_rel_run
+          FROM ls_update_index_run.
+
+      ENDIF.
+
+      COMMIT WORK.
+
+    ENDIF.
 
   ENDMETHOD.
 
@@ -223,7 +296,7 @@ CLASS lcl_cds_parent_child_indexer IMPLEMENTATION.
     SELECT SINGLE ddlname
       FROM ddldependency
       WHERE objectname = @iv_child_name
-    INTO @DATA(lv_ddl_name). "#EC CI_NOORDER
+    INTO @DATA(lv_ddl_name).                            "#EC CI_NOORDER
 
     IF sy-subrc = 0.
       lv_child_name = lv_ddl_name.
@@ -237,7 +310,7 @@ CLASS lcl_cds_parent_child_indexer IMPLEMENTATION.
         ( object  = 'DDLS' OR
           object = 'TABL' ) AND
         obj_name = @lv_child_name
-    INTO @DATA(ls_tadir). "#EC WARNOK
+    INTO @DATA(ls_tadir).                                   "#EC WARNOK
 
     IF sy-subrc <> 0.
       CLEAR ls_tadir.
@@ -273,8 +346,9 @@ INITIALIZATION.
 *    ) ).
 
 START-OF-SELECTION.
+
   DATA(lr_index) = NEW lcl_cds_parent_child_indexer(
-    value #(
+    VALUE #(
       cds_names   = s_cds[]
       refresh_ind = p_refrsh ) ).
 

@@ -1,37 +1,37 @@
 REPORT zscv_search_cds_views.
 
-*--------------------------------------------------------------------
-*Date        : 04.03.2023
-*Last update : 17.06.2023
-*Author      : Alwin van de Put
-*
-*Purpose:
-*Search all related ABAP views hierarchically.
-*
-*ABAP views are:
-*- ZSCV_DdicTable     = Database tables
-*- ZSCV_DdicView      = DDic views
-*- ZSCV_DdicView      = DDic CDS views -> must be changed
-*- ZSCV_EntityCdsView = Entity CDS views
+"--------------------------------------------------------------------
+"Date        : 04.03.2023
+"Last update : 11.11.2023
+"Author      : Alwin van de Put
+"
+"Purpose:
+"Search all related ABAP views hierarchically.
+"
+"ABAP views are:
+"- ZSCV_DdicTable     = Database tables
+"- ZSCV_DdicView      = DDic views
+"- ZSCV_DdicView      = DDic CDS views -> must be changed
+"- ZSCV_EntityCdsView = Entity CDS views
 
-*- ZSCV_AbapView      = All the above views
-*- ZSCV_CdsView       = DDic CDS views + Entity CDS views
+"- ZSCV_AbapView      = All the above views
+"- ZSCV_CdsView       = DDic CDS views + Entity CDS views
 
-*--------------------------------------------------------------------
+"--------------------------------------------------------------------
 
 TABLES: ars_w_api_state, dd26s, sscrfields.
 
 SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
 
   "Source view name selection
-  SELECTION-SCREEN BEGIN OF BLOCK dbtab WITH FRAME TITLE TEXT-101.
+  SELECTION-SCREEN BEGIN OF BLOCK dbtab WITH FRAME TITLE tt_view.
 
     "All tables
-    SELECTION-SCREEN  PUSHBUTTON 1(10) TEXT-006 USER-COMMAND dball.
+    SELECTION-SCREEN  PUSHBUTTON 1(10) pb_alltb USER-COMMAND dball.
     "Get successor CDS view
-    SELECTION-SCREEN  PUSHBUTTON 13(20) TEXT-007 USER-COMMAND dbsucc.
+    SELECTION-SCREEN  PUSHBUTTON 13(20) pb_succr USER-COMMAND dbsucc.
     "Compatibility tables
-    SELECTION-SCREEN  PUSHBUTTON 41(20) TEXT-005 USER-COMMAND compdb.
+    SELECTION-SCREEN  PUSHBUTTON 41(20) pb_comp USER-COMMAND compdb.
 
     DATA db_view_name_type TYPE vibastab.
     SELECT-OPTIONS s_dbtab FOR db_view_name_type.
@@ -49,29 +49,29 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
 
   SELECTION-SCREEN END OF BLOCK dbtab.
 
-  SELECTION-SCREEN BEGIN OF BLOCK vtype WITH FRAME TITLE TEXT-113.
-    PARAMETERS vt_table AS CHECKBOX DEFAULT 'X'.
-    PARAMETERS vt_ddvw  AS CHECKBOX DEFAULT 'X'.
+  SELECTION-SCREEN BEGIN OF BLOCK vtype WITH FRAME TITLE tt_vtype.
+    PARAMETERS vt_table AS CHECKBOX DEFAULT ''.
+    PARAMETERS vt_ddvw  AS CHECKBOX DEFAULT ''.
     PARAMETERS vt_ddcds AS CHECKBOX DEFAULT 'X'.
     PARAMETERS vt_entcd AS CHECKBOX DEFAULT 'X'.
   SELECTION-SCREEN END OF BLOCK vtype.
 
   "Result view name selection
-  SELECTION-SCREEN BEGIN OF BLOCK vname WITH FRAME TITLE TEXT-102.
+  SELECTION-SCREEN BEGIN OF BLOCK vname WITH FRAME TITLE tt_vname.
 
     "Custom ABAP views
-    SELECTION-SCREEN  PUSHBUTTON 2(17) TEXT-001 USER-COMMAND q_custom.
+    SELECTION-SCREEN  PUSHBUTTON 2(17) pbcustvw USER-COMMAND q_custom.
     "Custom DDic Views
-    SELECTION-SCREEN  PUSHBUTTON 21(20) TEXT-002 USER-COMMAND q_cusddc.
+    SELECTION-SCREEN  PUSHBUTTON 21(20) pbddicvw USER-COMMAND q_cusddc.
     "Custom DDL source
-    SELECTION-SCREEN  PUSHBUTTON 44(20) TEXT-003 USER-COMMAND q_cuscds.
+    SELECTION-SCREEN  PUSHBUTTON 44(20) pbcstddl USER-COMMAND q_cuscds.
     "All views
-    SELECTION-SCREEN  PUSHBUTTON 66(10) TEXT-004 USER-COMMAND q_all.
+    SELECTION-SCREEN  PUSHBUTTON 66(10) tq_all USER-COMMAND q_all.
 
     SELECT-OPTIONS s_abapvw FOR dd26s-viewname.
     SELECTION-SCREEN BEGIN OF LINE.
       SELECTION-SCREEN POSITION 1.
-      SELECTION-SCREEN COMMENT 1(70) TEXT-104.
+      SELECTION-SCREEN COMMENT 1(70) tabapvw.
     SELECTION-SCREEN END OF LINE.
 
     SELECT-OPTIONS s_ddicvw FOR dd26s-viewname.
@@ -82,16 +82,16 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
   SELECTION-SCREEN END OF BLOCK vname.
 
   "Status selection
-  SELECTION-SCREEN BEGIN OF BLOCK stat WITH FRAME TITLE TEXT-103.
+  SELECTION-SCREEN BEGIN OF BLOCK stat WITH FRAME TITLE tstat.
 
     "ABAP all
-    SELECTION-SCREEN  PUSHBUTTON 1(15) TEXT-105 USER-COMMAND q_aball.
+    SELECTION-SCREEN  PUSHBUTTON 1(15) tq_aball USER-COMMAND q_aball.
     "ABAP internal
-    SELECTION-SCREEN  PUSHBUTTON 18(18) TEXT-106 USER-COMMAND q_abap.
+    SELECTION-SCREEN  PUSHBUTTON 18(18) tq_abap USER-COMMAND q_abap.
     "API CDS views only
-    SELECTION-SCREEN  PUSHBUTTON 38(20) TEXT-107 USER-COMMAND q_api.
+    SELECTION-SCREEN  PUSHBUTTON 38(20) tq_api USER-COMMAND q_api.
     "All statuses
-    SELECTION-SCREEN  PUSHBUTTON 60(15) TEXT-108 USER-COMMAND q_stall.
+    SELECTION-SCREEN  PUSHBUTTON 60(15) tq_stall USER-COMMAND q_stall.
 
     SELECT-OPTIONS s_c1stat FOR ars_w_api_state-release_state.
     PARAMETERS p_c1kapp AS CHECKBOX.
@@ -100,17 +100,31 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
 
   SELECTION-SCREEN END OF BLOCK stat.
 
-  SELECTION-SCREEN BEGIN OF BLOCK odata WITH FRAME TITLE TEXT-112.
+  SELECTION-SCREEN BEGIN OF BLOCK odata WITH FRAME TITLE todata.
     DATA odata_publish_type TYPE xfeld.
     SELECT-OPTIONS s_odata FOR odata_publish_type.
     SELECT-OPTIONS s_rapodt FOR odata_publish_type.
   SELECTION-SCREEN END OF BLOCK odata.
 
-  SELECTION-SCREEN BEGIN OF BLOCK viewtype WITH FRAME TITLE TEXT-109.
+  SELECTION-SCREEN BEGIN OF BLOCK viewtype WITH FRAME TITLE tviewtp.
     "#BASIC
-    SELECTION-SCREEN  PUSHBUTTON 1(18) TEXT-008 USER-COMMAND vt_basic.
-*    "All
-*    SELECTION-SCREEN  PUSHBUTTON 21(18) dc_all USER-COMMAND dc_all.
+    SELECTION-SCREEN  PUSHBUTTON 1(8) tvtbasic USER-COMMAND vt_basic.
+
+    "#COMPOSITE
+    SELECTION-SCREEN  PUSHBUTTON 10(12) tvtcomp USER-COMMAND vt_comp.
+
+    "#CONSUMPTION
+    SELECTION-SCREEN  PUSHBUTTON 23(14) tvtcons USER-COMMAND vt_cons.
+
+    "#EXTENSION
+    SELECTION-SCREEN  PUSHBUTTON 38(12) tvtext USER-COMMAND vt_ext.
+
+    "#TRANSACTIONAL
+    SELECTION-SCREEN  PUSHBUTTON 51(12) tvtran USER-COMMAND vt_tran.
+
+    "All
+    SELECTION-SCREEN  PUSHBUTTON 69(18) tvw_all USER-COMMAND vw_all.
+
     DATA vdm_view_type_type TYPE ddannotation_val.
     SELECT-OPTIONS s_viewtp FOR vdm_view_type_type.
   SELECTION-SCREEN END OF BLOCK viewtype.
@@ -118,41 +132,19 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
 
   SELECTION-SCREEN BEGIN OF BLOCK datcat WITH FRAME TITLE datcat.
     "#DIMENSION
-    SELECTION-SCREEN  PUSHBUTTON 1(18) TEXT-009 USER-COMMAND dc_dim.
+    SELECTION-SCREEN  PUSHBUTTON 1(18) tdc_dim USER-COMMAND dc_dim.
     "All
-    SELECTION-SCREEN  PUSHBUTTON 21(18) TEXT-010 USER-COMMAND dc_all.
+    SELECTION-SCREEN  PUSHBUTTON 21(18) tdc_all USER-COMMAND dc_all.
     DATA data_category_type TYPE ddannotation_val.
     SELECT-OPTIONS s_datcat FOR data_category_type.
   SELECTION-SCREEN END OF BLOCK datcat.
 
-*  "Status selection
-*  SELECTION-SCREEN BEGIN OF BLOCK ddiccds WITH FRAME TITLE TEXT-110.
-*    PARAMETERS:
-*      p_ddcddc RADIOBUTTON GROUP ddcc  DEFAULT 'X',
-*      p_ddcddl RADIOBUTTON GROUP ddcc.
-*    SELECTION-SCREEN BEGIN OF LINE.
-*      SELECTION-SCREEN POSITION 1.
-*      SELECTION-SCREEN COMMENT 1(70) TEXT-111.
-*    SELECTION-SCREEN END OF LINE.
-*  SELECTION-SCREEN END OF BLOCK ddiccds.
-
 SELECTION-SCREEN END OF BLOCK sel.
-
 
 AT SELECTION-SCREEN OUTPUT.
 
   DATA(ls_restriction) =
     VALUE sscr_restrict(
-
-*      opt_list_tab = VALUE #(
-*        (
-*          name    = 'EQ_ONLY'         "Options list name (is not the SELECT-OPTION name)
-*          options = VALUE #(
-*            eq      = abap_true       "EQ option is activated
-*            bt      = abap_false      "BT option is deactivated (there are more options)
-*          )
-*        )
-*      )
 
       ass_tab      = VALUE #(
         (
@@ -167,7 +159,7 @@ AT SELECTION-SCREEN OUTPUT.
         (
           kind        = 'S'           "A(ll), B(lock), S(elect-Option)
           name        = 'S_DTELNM'    "SELECT-OPTION field name
-          sg_main     = 'I'           "Main SiGn: I = only include, SPACE = both  / * Both Include and Exclude options
+          sg_main     = 'I'           "Main SiGn: I = only include
           sg_addy     = space         "Additional multiple selection screen - Sign ('I'/'')
           "op_main     = 'EQ_ONLY'     "Main selection screen - options list name (must match opt_list_tab[]-name
           op_addy     = ''            "Additional multiple selection screen - options list name
@@ -175,7 +167,7 @@ AT SELECTION-SCREEN OUTPUT.
         (
           kind        = 'S'           "A(ll), B(lock), S(elect-Option)
           name        = 'S_DOMNM'    "SELECT-OPTION field name
-          sg_main     = 'I'           "Main SiGn: I = only include, SPACE = both  / * Both Include and Exclude options
+          sg_main     = 'I'           "Main SiGn: I = only include
           sg_addy     = space         "Additional multiple selection screen - Sign ('I'/'')
           "op_main     = 'EQ_ONLY'     "Main selection screen - options list name (must match opt_list_tab[]-name
           op_addy     = ''            "Additional multiple selection screen - options list name
@@ -257,16 +249,8 @@ CLASS zca_progress_bar DEFINITION
   PRIVATE SECTION.
 ENDCLASS.
 
-
-
 CLASS zca_progress_bar IMPLEMENTATION.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method zca_progress_bar->ADD_TEXT
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_TEXT                        TYPE        STRING
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD add_text.
 
     DATA(lv_percentage) = get_percentage( ).
@@ -282,11 +266,6 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method zca_progress_bar->CLEAR
-* +-------------------------------------------------------------------------------------------------+
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD clear.
 
     ""If no message shown, than clear is not needed.
@@ -301,13 +280,6 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Static Public Method zca_progress_bar=>CREATE
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IS_DATA                        TYPE        GTS_DATA
-* | [<-()] RR_INSTANCE                    TYPE REF TO zca_progress_bar
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD create.
 
     rr_instance = NEW #( ).
@@ -315,24 +287,12 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Protected Method zca_progress_bar->GET_PERCENTAGE
-* +-------------------------------------------------------------------------------------------------+
-* | [<-()] RV_PERCENTAGE                  TYPE        GTV_PERCENTAGE
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_percentage.
 
     rv_percentage = ( gv_value / gs_data-max_value ) * 100.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Protected Method zca_progress_bar->GET_REFRESH_NEEDED_IND
-* +-------------------------------------------------------------------------------------------------+
-* | [<-()] RV_REFRESH_NEEDED_IND          TYPE        XFELD
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_refresh_needed_ind.
 
     DATA(lv_percentage) = get_percentage( ).
@@ -366,12 +326,6 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Protected Method zca_progress_bar->GET_TEXT
-* +-------------------------------------------------------------------------------------------------+
-* | [<-()] RV_TEXT                        TYPE        GTV_TEXT
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_text.
 
     DATA:
@@ -401,12 +355,6 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method zca_progress_bar->SET_VALUE
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_VALUE                       TYPE        GTV_VALUE
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD set_value.
 
     IF iv_text IS NOT INITIAL.
@@ -438,11 +386,6 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Static Public Method zca_progress_bar=>STATIC_CLEAR
-* +-------------------------------------------------------------------------------------------------+
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD static_clear.
 
     ""Use this method only for clearing progress bar not created by this class
@@ -453,12 +396,6 @@ CLASS zca_progress_bar IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Static Public Method zca_progress_bar=>STATIC_SET_TEXT
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_TEXT                        TYPE        GTV_TEXT
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD static_set_text.
 
     CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
@@ -507,14 +444,17 @@ CLASS zscv_view_search_dp DEFINITION.
 
     TYPES:
       BEGIN OF ts_ddic_view,
-        AbapViewType                  TYPE c LENGTH 10,
-        AbapViewName                  TYPE ZSCV_AbapViewByView-AbapViewName,
-        DdlSourceName                 TYPE cds_sql_view-ddlsourcename,
+        basictablecdsviewind          TYPE zscv_abapviewbyview-basictablecdsviewind,
+        relationlevel                 TYPE zscv_abapviewbyview-relationlevel,
+        abapviewtype                  TYPE c LENGTH 10,
+        abapviewname                  TYPE zscv_abapviewbyview-abapviewname,
+        ddlsourcename                 TYPE cds_sql_view-ddlsourcename,
 
-        DataCategory                  TYPE ddannotation_val,
-        EmbeddedAnalyticsQueryInd     TYPE abap_bool,
+        vdmviewtype                   TYPE ddheadanno-value,
+        datacategory                  TYPE ddannotation_val,
+        embeddedanalyticsqueryind     TYPE abap_bool,
 
-        DdicViewName                  TYPE dd26s-viewname,
+        ddicviewname                  TYPE dd26s-viewname,
         childddicviewname             TYPE dd26s-viewname,
 
         c1_releasestate               TYPE ars_w_api_state-release_state,
@@ -525,23 +465,22 @@ CLASS zscv_view_search_dp DEFINITION.
         c2_useinkeyuserapps           TYPE abap_bool,
         c2_useincloudplatform         TYPE abap_bool,
 
-        EndUserTextLabel              TYPE ddheadanno-value,
-        VdmViewType                   TYPE ddheadanno-value,
-        AccessCONTROLAuthCheck        TYPE ddheadanno-value,
-        ObjectModelUsageTypeDataClass TYPE ddheadanno-value,
-        VdmLifeCycleContractType      TYPE ddheadanno-value,
-        ObjectModelCreateEnabled      TYPE ddheadanno-value,
-        ODataPublish                  TYPE ddheadanno-value,
-        RapPublish                    TYPE ddheadanno-value,
+        endusertextlabel              TYPE ddheadanno-value,
+        accesscontrolauthcheck        TYPE ddheadanno-value,
+        objectmodelusagetypedataclass TYPE ddheadanno-value,
+        vdmlifecyclecontracttype      TYPE ddheadanno-value,
+        objectmodelcreateenabled      TYPE ddheadanno-value,
+        odatapublish                  TYPE ddheadanno-value,
+        rappublish                    TYPE ddheadanno-value,
 
-        MetadataAllowExtensions       TYPE ddheadanno-value,
-        SearchSearchable              TYPE ddheadanno-value,
-        VdmUsageType1                 TYPE ddheadanno-value,
-        ObjectModelSemanticKey1       TYPE ddheadanno-value,
+        metadataallowextensions       TYPE ddheadanno-value,
+        searchsearchable              TYPE ddheadanno-value,
+        vdmusagetype1                 TYPE ddheadanno-value,
+        objectmodelsemantickey1       TYPE ddheadanno-value,
 
-        Create_User_Name              TYPE dd02l-as4user,
-        Create_Date                   TYPE dd02l-as4date,
-        Create_Time                   TYPE dd02l-as4time,
+        create_user_name              TYPE dd02l-as4user,
+        create_date                   TYPE dd02l-as4date,
+        create_time                   TYPE dd02l-as4time,
 
         start_view_name               TYPE dd26s-viewname,
 
@@ -555,7 +494,7 @@ CLASS zscv_view_search_dp DEFINITION.
       RETURNING VALUE(view_list) TYPE zscv_view_search_dp=>tt_ddic_view_list
       RAISING   zcx_generic_exc.
 
-    TYPES t_view_rng TYPE RANGE OF ZSCV_AbapViewByView-AbapViewName.
+    TYPES t_view_rng TYPE RANGE OF zscv_abapviewbyview-abapviewname.
     METHODS get_views_by_field_names
       IMPORTING view_rng         TYPE t_view_rng OPTIONAL
       RETURNING VALUE(view_list) TYPE zscv_view_search_dp=>tt_ddic_view_list
@@ -578,11 +517,6 @@ CLASS zscv_view_search_dp DEFINITION.
       IMPORTING db_table_name    TYPE vibastab
       RETURNING VALUE(view_list) TYPE tt_ddic_view_list
       RAISING   zcx_generic_exc.
-
-*    METHODS _get_abap_views_by_ddl
-*      IMPORTING db_table_name    TYPE vibastab
-*      RETURNING VALUE(view_list) TYPE tt_ddic_view_list
-*      RAISING   zcx_generic_exc.
 
     METHODS _get_views_by_source_name2
       IMPORTING db_table_name    TYPE vibastab
@@ -629,13 +563,13 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
     DATA db_table_view_list TYPE zscv_view_search_dp=>tt_ddic_view_list.
 
     SELECT
-      FROM ZSCV_AbapView
+      FROM zscv_abapview
       FIELDS
-        AbapViewName
+        abapviewname
       WHERE
-        AbapViewName IN @view_range2[]
+        abapviewname IN @view_range2[]
       ORDER BY
-        AbapViewName
+        abapviewname
       INTO TABLE @DATA(root_views).
 
     "3. Vullen van de output table ==> <fs_output_line>
@@ -655,15 +589,15 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
       lr_progress_bar->set_value(
         iv_value = sy-tabix
-        iv_text  = |Count: { view_list_line_count }, root view: { <root_view>-AbapViewName } | ).
+        iv_text  = |Count: { view_list_line_count }, root view: { <root_view>-abapviewname } | ).
 
       DATA(temp_view_list) = _get_views_by_source_name(
-        db_table_name = <root_view>-AbapViewName ).
+        db_table_name = <root_view>-abapviewname ).
 
       LOOP AT temp_view_list
         ASSIGNING FIELD-SYMBOL(<source_line>).
 
-        <source_line>-start_view_name = <root_view>-AbapViewName.
+        <source_line>-start_view_name = <root_view>-abapviewname.
 
         APPEND <source_line> TO view_list.
 
@@ -692,14 +626,14 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
     DATA(view_type_rng) = _get_view_type_rng( ).
 
     SELECT
-       AbapView~AbapViewType,
-       AbapView~AbapViewName,
+       abapview~abapviewtype,
+       abapview~abapviewname,
 
-       AbapView~ddlsourcename,
+       abapview~ddlsourcename,
        \_cdsview-datacategory,
        \_cdsview-embeddedanalyticsqueryind,
 
-       AbapView~DdicViewName,
+       abapview~ddicviewname,
 
         \_cdsview\_status-c1_releasestate,
         \_cdsview\_status-c1_useinkeyuserapps,
@@ -707,44 +641,44 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
         \_cdsview\_status-c2_releasestate,
 
-        \_CdsView-EndUserTextLabel,
-        \_CdsView-vdmviewtype,
-        \_CdsView-accesscontrolauthcheck,
-        \_CdsView-objectmodelusagetypedataclass,
-        \_CdsView-vdmlifecyclecontracttype,
-        \_CdsView-objectmodelcreateenabled,
-        \_CdsView-odatapublish,
-        \_CdsView-rappublish,
+        \_cdsview-endusertextlabel,
+        \_cdsview-vdmviewtype,
+        \_cdsview-accesscontrolauthcheck,
+        \_cdsview-objectmodelusagetypedataclass,
+        \_cdsview-vdmlifecyclecontracttype,
+        \_cdsview-objectmodelcreateenabled,
+        \_cdsview-odatapublish,
+        \_cdsview-rappublish,
 
-        \_CdsView-MetadataAllowExtensions,
-        \_CdsView-SearchSearchable,
-        \_CdsView-VdmUsageType1,
-        \_CdsView-ObjectModelSemanticKey1,
+        \_cdsview-metadataallowextensions,
+        \_cdsview-searchsearchable,
+        \_cdsview-vdmusagetype1,
+        \_cdsview-objectmodelsemantickey1,
 
-        \_cdsview-CreateUser AS Create_User_Name,
-        \_cdsview-CreateDate AS Create_Date
+        \_cdsview-createuser AS create_user_name,
+        \_cdsview-createdate AS create_date
 
         FROM
-          ZSCV_AbapView AS AbapView
+          zscv_abapview AS abapview
 
         WHERE
-          AbapView~AbapViewType    IN @view_type_rng[] AND
-          AbapView~AbapViewName    IN @view_range[] AND
-          AbapView~AbapViewName    IN @s_abapvw[] AND
-          AbapView~DdicViewName    IN @s_ddicvw[] AND
+          abapview~abapviewtype    IN @view_type_rng[] AND
+          abapview~abapviewname    IN @view_range[] AND
+          abapview~abapviewname    IN @s_abapvw[] AND
+          abapview~ddicviewname    IN @s_ddicvw[] AND
           \_cdsview-ddlsourcename  IN @s_ddlnm
           AND
           (where_parameters-where_text)
 
           AND
-          \_cdsview-VdmViewType     IN @s_viewtp[] AND
-          \_cdsview-ODataPublish    IN @s_odata[] AND
-          \_cdsview-RapPublish      IN @s_rapodt[] AND
+          \_cdsview-vdmviewtype     IN @s_viewtp[] AND
+          \_cdsview-odatapublish    IN @s_odata[] AND
+          \_cdsview-rappublish      IN @s_rapodt[] AND
           \_cdsview-datacategory    IN @s_datcat[]
 
           ORDER BY
-            AbapView~ddlsourcename,
-            AbapView~DdicViewName
+            abapview~ddlsourcename,
+            abapview~ddicviewname
 
       INTO CORRESPONDING FIELDS OF TABLE @view_list.
 
@@ -897,98 +831,6 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
   ENDMETHOD.
 
-*  METHOD _get_abap_views_by_ddl.
-*
-*    TYPES:
-*      BEGIN OF ty_temp_parent_view,
-*        ParentAbapViewName  TYPE ZSCV_AbapViewParent-ParentAbapViewName,
-*        ParentAbapViewType  TYPE ZSCV_AbapViewParent-ParentAbapViewType,
-*        ParentDdlSourceName TYPE ZSCV_AbapViewParent-ParentDdlSourceName,
-*        ParentDdicViewName  TYPE ZSCV_AbapViewParent-ParentDdicViewName,
-*      END OF ty_temp_parent_view,
-*      tt_temp_parent_views TYPE SORTED TABLE OF ty_temp_parent_view
-*        WITH UNIQUE KEY ParentAbapViewName.
-*
-*    DATA child_view_rng TYPE RANGE OF ZSCV_AbapViewParent-ChildAbapViewName.
-*
-*    child_view_rng = VALUE #(
-*      ( sign = 'I'
-*        option = 'EQ'
-*        low = db_table_name )
-*    ).
-*
-*    DATA hierarchy_level TYPE i.
-*
-*    WHILE 1 = 1.
-*
-*      hierarchy_level = hierarchy_level + 1.
-*
-*      zca_progress_bar=>static_set_text( |Hierarchy level: {  hierarchy_level } - Childs: { lines( child_view_rng ) }| ).
-*
-*      SELECT
-*        FROM ZSCV_AbapViewParent( p_DdicCdsBasedOnDllResourceInd = 'X' )
-*        FIELDS
-*          ParentAbapViewName,
-*          ParentAbapViewType,
-*          ParentDdlSourceName,
-*          ParentDdicViewName
-*        WHERE ChildAbapViewName IN @child_view_rng
-*        GROUP BY
-*          ParentAbapViewName,
-*          ParentAbapViewType,
-*          ParentDdlSourceName,
-*          ParentDdicViewName
-*        INTO TABLE @DATA(level_parent_view_list).
-*
-*      SORT level_parent_view_list BY ParentAbapViewName.
-*
-*      REFRESH child_view_rng[].
-*
-*      DATA parent_view_list TYPE tt_temp_parent_views.
-*
-*      LOOP AT level_parent_view_list
-*        ASSIGNING FIELD-SYMBOL(<level_parent_view>).
-*
-*        READ TABLE parent_view_list
-*          WITH KEY ParentAbapViewName = <level_parent_view>-ParentAbapViewName
-*          TRANSPORTING NO FIELDS.
-*
-*        IF sy-subrc <> 0.
-*          INSERT <level_parent_view> INTO TABLE parent_view_list.
-*
-*          APPEND VALUE #(
-*            sign = 'I'
-*            option = 'EQ'
-*            low = <level_parent_view>-ParentAbapViewName )
-*            TO child_view_rng.
-*        ENDIF.
-*
-*      ENDLOOP.
-*
-*      REFRESH level_parent_view_list[].
-*
-*      IF child_view_rng[] IS INITIAL.
-*        EXIT.
-*      ENDIF.
-*
-*    ENDWHILE.
-*
-*    LOOP AT parent_view_list
-*      ASSIGNING FIELD-SYMBOL(<view>).
-*
-*      APPEND INITIAL LINE TO view_list
-*        ASSIGNING FIELD-SYMBOL(<result_view>).
-*
-*      <result_view>-abapviewtype  = <view>-ParentAbapViewType.
-*      <result_view>-ddlsourcename = <view>-ParentDdlSourceName.
-*      <result_view>-ddicviewname  = <view>-parentddicviewname.
-*
-*    ENDLOOP.
-*
-*    EXIT.
-*
-*  ENDMETHOD.
-
   METHOD _get_views_by_source_name2.
 
     DATA(where_parameters) = _get_where_parameters( ).
@@ -1001,14 +843,16 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
     TRY.
 
         SELECT
-           AbapView~AbapViewType,
-           AbapView~AbapViewName,
+           abapview~basictablecdsviewind,
+           abapview~relationlevel,
+           abapview~abapviewtype,
+           abapview~abapviewname,
 
-           AbapView~ddlsourcename,
+           abapview~ddlsourcename,
            \_cdsview-datacategory,
            \_cdsview-embeddedanalyticsqueryind,
 
-           AbapView~DdicViewName,
+           abapview~ddicviewname,
 
             \_cdsview\_status-c1_releasestate,
             \_cdsview\_status-c1_useinkeyuserapps,
@@ -1016,45 +860,45 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
             \_cdsview\_status-c2_releasestate,
 
-            \_CdsView-EndUserTextLabel,
-            \_CdsView-vdmviewtype,
-            \_CdsView-accesscontrolauthcheck,
-            \_CdsView-objectmodelusagetypedataclass,
-            \_CdsView-vdmlifecyclecontracttype,
-            \_CdsView-objectmodelcreateenabled,
-            \_CdsView-odatapublish,
-            \_CdsView-rappublish,
+            \_cdsview-endusertextlabel,
+            \_cdsview-vdmviewtype,
+            \_cdsview-accesscontrolauthcheck,
+            \_cdsview-objectmodelusagetypedataclass,
+            \_cdsview-vdmlifecyclecontracttype,
+            \_cdsview-objectmodelcreateenabled,
+            \_cdsview-odatapublish,
+            \_cdsview-rappublish,
 
-            \_CdsView-MetadataAllowExtensions,
-            \_CdsView-SearchSearchable,
-            \_CdsView-VdmUsageType1,
-            \_CdsView-ObjectModelSemanticKey1,
+            \_cdsview-metadataallowextensions,
+            \_cdsview-searchsearchable,
+            \_cdsview-vdmusagetype1,
+            \_cdsview-objectmodelsemantickey1,
 
-            \_cdsview-CreateUser AS Create_User_Name,
-            \_cdsview-CreateDate AS Create_Date
+            \_cdsview-createuser AS create_user_name,
+            \_cdsview-createdate AS create_date
 
             FROM
-              ZSCV_AbapViewByView(
-                  p_AbapViewName                 = @db_table_name
-                ) AS AbapView
+              zscv_abapviewbyview(
+                  p_abapviewname                 = @db_table_name
+                ) AS abapview
 
             WHERE
-              AbapView~AbapViewType    IN @view_type_rng[] AND
-              AbapView~AbapViewName    IN @s_abapvw[] AND
-              AbapView~DdicViewName    IN @s_ddicvw[] AND
+              abapview~abapviewtype    IN @view_type_rng[] AND
+              abapview~abapviewname    IN @s_abapvw[] AND
+              abapview~ddicviewname    IN @s_ddicvw[] AND
               \_cdsview-ddlsourcename  IN @s_ddlnm
               AND
               (where_parameters-where_text)
 
               AND
-              \_cdsview-VdmViewType     IN @s_viewtp[] AND
-              \_cdsview-ODataPublish    IN @s_odata[] AND
-              \_cdsview-RapPublish      IN @s_rapodt[] AND
+              \_cdsview-vdmviewtype     IN @s_viewtp[] AND
+              \_cdsview-odatapublish    IN @s_odata[] AND
+              \_cdsview-rappublish      IN @s_rapodt[] AND
               \_cdsview-datacategory    IN @s_datcat[]
 
           ORDER BY
             \_cdsview-ddlsourcename,
-            AbapView~ddicviewname
+            abapview~ddicviewname
 
           INTO CORRESPONDING FIELDS OF TABLE @view_list.
 
@@ -1153,7 +997,7 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
     DATA(temp_filtered_views) = me->get_views_by_field_names( view_rng ).
 
-    SORT temp_filtered_views BY AbapViewName.
+    SORT temp_filtered_views BY abapviewname.
 
     LOOP AT view_list
      ASSIGNING FIELD-SYMBOL(<view>).
@@ -1215,7 +1059,309 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
 ENDCLASS.
 
-CLASS zscv_main_ctl DEFINITION.
+
+CLASS zscv_cds_view_list_vw DEFINITION
+  CREATE PRIVATE.
+
+  PUBLIC SECTION.
+
+    TYPES tt_cds_views TYPE zscv_view_search_dp=>tt_ddic_view_list.
+
+    CLASS-METHODS create_by_ref_data
+      IMPORTING ir_cds_views_data TYPE REF TO tt_cds_views
+      RETURNING VALUE(rr_view)    TYPE REF TO zscv_cds_view_list_vw.
+
+    METHODS display.
+
+    METHODS refresh
+      RAISING cx_salv_no_new_data_allowed.
+
+    EVENTS on_function
+      EXPORTING VALUE(ev_function_name) TYPE salv_de_function
+                VALUE(et_selected_rows) TYPE salv_t_row.
+
+  PRIVATE SECTION.
+
+    DATA gr_cds_views_data TYPE REF TO tt_cds_views.
+    DATA gr_container TYPE REF TO cl_gui_custom_container.
+    DATA go_gr_alv TYPE REF TO cl_salv_table.
+
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    "Create
+    METHODS _create_header
+      IMPORTING
+        io_gr_alv TYPE REF TO cl_salv_table.
+
+    METHODS _add_field_to_catalogue
+      IMPORTING column   TYPE c
+                field    TYPE c
+                table    TYPE c
+                length   TYPE c
+                text     TYPE c
+                hot      TYPE c
+                checkbox TYPE c.
+
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    "Events
+    METHODS:
+      on_user_command FOR EVENT added_function OF cl_salv_events
+        IMPORTING e_salv_function,
+
+      on_before_salv_function FOR EVENT before_salv_function OF cl_salv_events
+        IMPORTING e_salv_function,
+
+      on_after_salv_function FOR EVENT after_salv_function OF cl_salv_events
+        IMPORTING e_salv_function,
+
+      on_double_click FOR EVENT double_click OF cl_salv_events_table
+        IMPORTING row column,
+
+      on_link_click FOR EVENT link_click OF cl_salv_events_table
+        IMPORTING row column.
+
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    "Setters
+    METHODS _set_table_settings
+      IMPORTING
+        io_gr_alv TYPE REF TO cl_salv_table.
+
+    METHODS _set_columns
+      IMPORTING io_gr_alv TYPE REF TO cl_salv_table
+      RAISING   cx_salv_not_found.
+
+    METHODS _set_functions
+      IMPORTING
+        io_gr_alv TYPE REF TO cl_salv_table.
+
+    METHODS _set_events
+      IMPORTING
+        io_gr_alv TYPE REF TO cl_salv_table.
+
+ENDCLASS.
+
+CLASS zscv_cds_view_list_vw IMPLEMENTATION.
+
+  METHOD create_by_ref_data.
+
+    rr_view = NEW #( ).
+
+    rr_view->gr_cds_views_data = ir_cds_views_data.
+
+  ENDMETHOD.
+
+  METHOD display.
+
+    TRY.
+
+        cl_salv_table=>factory(
+          IMPORTING
+            r_salv_table = go_gr_alv
+          CHANGING
+            t_table      = gr_cds_views_data->* ).
+
+        go_gr_alv->set_screen_status(
+          pfstatus      = 'SALV_STANDARD'
+          report        = sy-repid
+          set_functions = go_gr_alv->c_functions_all ).
+
+        "Set functions
+        _set_functions( go_gr_alv ).
+
+        "Create header
+        _create_header( go_gr_alv ).
+
+        "Set table settings
+        _set_table_settings( go_gr_alv ).
+
+        "Set events
+        _set_events( go_gr_alv ).
+
+        "Enable cell selection mode
+        DATA(lo_selections) = go_gr_alv->get_selections( ).
+        lo_selections->set_selection_mode( if_salv_c_selection_mode=>row_column ).
+
+        "Set columns
+        _set_columns( go_gr_alv ).
+
+
+        "Display
+        go_gr_alv->display( ).
+
+      CATCH cx_root INTO DATA(lx_root).
+
+        MESSAGE lx_root->get_text( ) TYPE 'W'.
+
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD refresh.
+
+    go_gr_alv->refresh( ).
+
+  ENDMETHOD.
+
+  METHOD on_double_click.
+
+  ENDMETHOD.
+
+  METHOD _create_header.
+
+    "Create header
+    DATA lv_rows  TYPE string.
+    DESCRIBE TABLE gr_cds_views_data->* LINES lv_rows.
+    DATA lv_title TYPE string.
+    lv_title = |Row count: { lv_rows }|.
+    DATA(lo_layout_grid) = NEW cl_salv_form_layout_grid( ).
+    DATA(lo_layout_logo) = NEW cl_salv_form_layout_logo( ).
+    lo_layout_grid->create_label(
+      row     = 1
+      column  = 1
+      text    = lv_title
+      tooltip = lv_title ).
+    lo_layout_logo->set_left_content( lo_layout_grid ).
+    DATA lo_content TYPE REF TO cl_salv_form_element.
+    lo_content = lo_layout_logo.
+    io_gr_alv->set_top_of_list( lo_content ).
+
+  ENDMETHOD.
+
+  METHOD _add_field_to_catalogue.
+
+    DATA(gr_columns) = go_gr_alv->get_columns( ).
+
+    TRY.
+        DATA(gr_column)  = gr_columns->get_column( to_upper( field ) ).
+
+        gr_column->set_short_text( CONV #( text ) ).
+        gr_column->set_medium_text( CONV #(  text ) ).
+        gr_column->set_long_text( CONV #( text ) ).
+        gr_column->set_fixed_header_text( CONV #( text ) ).
+
+      CATCH cx_root INTO DATA(lr_root).
+
+        MESSAGE lr_root->get_text( ) TYPE 'W'.
+
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD _set_columns.
+
+    DATA(lo_column_list)  = io_gr_alv->get_columns( ).
+    lo_column_list->set_optimize( 'X' ).
+
+    _add_field_to_catalogue( column = '01' field = 'BASICTABLECDSVIEWIND'   table = 'VIEW_LIST' length = '1' text = 'DB Table Basic CDS View'              hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '02' field = 'ABAPVIEWTYPE'           table = 'VIEW_LIST' length = '10' text = 'View Type'              hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '07' field = 'DDICVIEWNAME'           table = 'VIEW_LIST' length = '20' text = 'DDic Name'              hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '05' field = 'DDLSOURCENAME'          table = 'VIEW_LIST' length = '30' text = 'DDL Source Name'        hot = 'X' checkbox = ' ' ).
+
+    _add_field_to_catalogue( column = '30' field = 'C1_RELEASESTATE'        table = 'VIEW_LIST' length = '10' text = 'C1 Release State'           hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '32' field = 'C1_UseInKeyUserApps'    table = 'VIEW_LIST' length = '10' text =  'C1 Use In Key User Apps'   hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '34' field = 'C1_USEINCLOUDPLATFORM'  table = 'VIEW_LIST' length = '12' text = 'C1 Use In Cloud platform'   hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '40' field = 'C2_RELEASESTATE'        table = 'VIEW_LIST' length = '10' text = 'C2 Release State'           hot = 'X' checkbox = ' ' ).
+
+    _add_field_to_catalogue( column = '50' field = 'ENDUSERTEXTLABEL'               table = 'VIEW_LIST' length = '30' text = 'End User Text Label'  hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'DATACATEGORY'                   table = 'VIEW_LIST' length = '15' text = 'CDS Data Category'    hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'VDMVIEWTYPE'                    table = 'VIEW_LIST' length = '15' text = 'VDM View Type'        hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'ACCESSCONTROLAUTHCHECK'         table = 'VIEW_LIST' length = '10' text = 'Auth. check'          hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'OBJECTMODELUSAGETYPEDATACLASS'  table = 'VIEW_LIST' length = '15' text = 'Data Class'           hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'VDMLIFECYCLECONTRACTTYPE'       table = 'VIEW_LIST' length = '15' text = 'Contract Type'        hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'OBJECTMODELCREATEENABLED'       table = 'VIEW_LIST' length = '10' text = 'Object Model Create Enabled' hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '50' field = 'ODATAPUBLISH'                   table = 'VIEW_LIST' length = '10' text = 'OData Publish'        hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '50' field = 'RAPPUBLISH'                     table = 'VIEW_LIST' length = '10' text = 'RAP Serv.def.'        hot = 'X' checkbox = 'X' ).
+
+
+    _add_field_to_catalogue( column = '50' field = 'MetadataAllowExtensions'        table = 'VIEW_LIST' length = '10' text = '@Metadata.allowExtensions'  hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '50' field = 'SearchSearchable'               table = 'VIEW_LIST' length = '10' text = '@Search.searchable.'        hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '50' field = 'VdmUsageType1'                  table = 'VIEW_LIST' length = '10' text = '@VDM.usage.type 1'          hot = 'X' checkbox = '' ).
+    _add_field_to_catalogue( column = '50' field = 'ObjectModelSemanticKey1'        table = 'VIEW_LIST' length = '10' text = '@ObjectModel.semanticKey 1' hot = 'X' checkbox = '' ).
+
+
+    _add_field_to_catalogue( column = '70' field = 'CREATE_USER_NAME'               table = 'VIEW_LIST' length = '12' text = 'Last Changed User'    hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '72' field = 'CREATE_DATE'                    table = 'VIEW_LIST' length = '12' text = 'Last Changed Date'    hot = 'X' checkbox = ' ' ).
+
+  ENDMETHOD.
+
+  METHOD _set_table_settings.
+
+    "Apply zebra style to lv_rows
+    DATA(lo_display_settings) = io_gr_alv->get_display_settings( ).
+    lo_display_settings->set_striped_pattern( cl_salv_display_settings=>true ).
+
+    "Enable the save layout buttons
+    DATA lv_key TYPE salv_s_layout_key.
+    lv_key-report = sy-repid.
+    DATA(lo_layout) = io_gr_alv->get_layout( ).
+    lo_layout->set_key( lv_key ).
+    lo_layout->set_save_restriction( if_salv_c_layout=>restrict_none ).
+    lo_layout->set_default( abap_true ).
+
+  ENDMETHOD.
+
+  METHOD _set_functions.
+
+    TRY.
+
+        DATA(lo_gr_function_list) = io_gr_alv->get_functions( ).
+
+        "Show all default buttons of ALV
+        lo_gr_function_list->set_all( abap_true ).
+
+      CATCH cx_root INTO DATA(lx_root).
+
+        MESSAGE lx_root->get_text( ) TYPE 'W'.
+
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD _set_events.
+
+    "Register events
+    DATA(lo_events) = io_gr_alv->get_event( ).
+
+    SET HANDLER me->on_double_click FOR lo_events.
+
+    SET HANDLER me->on_user_command FOR lo_events.
+
+    SET HANDLER me->on_before_salv_function FOR lo_events.
+
+    SET HANDLER me->on_after_salv_function FOR lo_events.
+
+    SET HANDLER me->on_double_click FOR lo_events.
+
+    SET HANDLER me->on_link_click FOR lo_events.
+
+  ENDMETHOD.
+
+  METHOD on_after_salv_function.
+
+  ENDMETHOD.
+
+  METHOD on_before_salv_function.
+
+  ENDMETHOD.
+
+  METHOD on_user_command.
+
+    DATA(lr_selections) = me->go_gr_alv->get_selections( ).
+    DATA(et_selected_rows) = lr_selections->get_selected_rows( ).
+
+    RAISE EVENT on_function
+      EXPORTING ev_function_name = e_salv_function
+                et_selected_rows = et_selected_rows.
+
+  ENDMETHOD.
+
+  METHOD on_link_click.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS zscv_search_cds_views_ctl DEFINITION.
 
   PUBLIC SECTION.
 
@@ -1228,30 +1374,139 @@ CLASS zscv_main_ctl DEFINITION.
 
     METHODS start_of_selection.
 
+    METHODS end_of_selection.
+
   PRIVATE SECTION.
 
-    DATA view_list TYPE zscv_view_search_dp=>tt_ddic_view_list.
+    DATA view_list      TYPE zscv_view_search_dp=>tt_ddic_view_list.
+    DATA gr_view TYPE REF TO zscv_cds_view_list_vw.
     DATA field_catalog  TYPE slis_t_fieldcat_alv.
+    DATA gr_alv_table   TYPE REF TO cl_salv_table.
+
+    CONSTANTS gcv_indexer_program_name TYPE syst-repid VALUE 'ZSCV_CDS_RELATION_INDEXER'.
+    CONSTANTS gcv_index_table TYPE tabname16 VALUE 'ZSCV_CDS_REL'.
 
     METHODS _show_data.
-
-    METHODS _add_field_to_catalogue
-      IMPORTING column   TYPE c
-                field    TYPE c
-                table    TYPE c
-                length   TYPE c
-                text     TYPE c
-                hot      TYPE c
-                checkbox TYPE c.
-
-    METHODS _create_field_catalogue.
+    METHODS _on_view_function FOR EVENT on_function OF zscv_cds_view_list_vw
+      IMPORTING ev_function_name
+                et_selected_rows.
 
 ENDCLASS.
 
-
-CLASS zscv_main_ctl IMPLEMENTATION.
+CLASS zscv_search_cds_views_ctl IMPLEMENTATION.
 
   METHOD initialization.
+
+    SELECT
+      FROM zscv_cds_rel
+      FIELDS COUNT( * ) AS relationcount
+      INTO @DATA(relation_count).
+
+    IF relation_count = 0.
+
+      MESSAGE
+        |Table { gcv_index_table } is empty. Start program { gcv_indexer_program_name } to fill it.|
+        TYPE 'E'.
+
+    ENDIF.
+
+    SELECT SINGLE
+      FROM zscv_cds_rel_run
+      FIELDS *
+      INTO @DATA(ls_index_run).
+
+    IF ls_index_run IS INITIAL.
+
+      MESSAGE
+        |Table { gcv_index_table } is empty. Start program { gcv_indexer_program_name } to fill it.|
+        TYPE 'E'.
+
+    ENDIF.
+
+    IF ls_index_run-status <> 'COMPLETED'.
+
+      MESSAGE
+        |Program { gcv_indexer_program_name } is not yet completed. Wait till completed.|
+        TYPE 'W'.
+
+    ENDIF.
+
+    IF ls_index_run-sap_release <> sy-saprl.
+
+      MESSAGE
+        |CDS Relation Index table is not up-to-date.| &&
+        | Start program { gcv_indexer_program_name } to fill it.| &&
+        | SAP release { ls_index_run-sap_release } vs { sy-saprl }.|
+        TYPE 'W'.
+
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD _on_view_function.
+
+    TRY.
+
+        CASE ev_function_name.
+
+          WHEN 'LINK_SUPER' OR 'LINK_SUB' OR 'LINK_DELE'.
+
+            DATA(lv_selected_rows_count) = lines( et_selected_rows ).
+
+            IF lv_selected_rows_count <> 1.
+              MESSAGE |One CDS view must be selected.| TYPE 'I' DISPLAY LIKE 'E'.
+              RETURN.
+            ENDIF.
+
+            DATA(row_index) = et_selected_rows[ 1 ].
+
+            READ TABLE me->view_list
+              ASSIGNING FIELD-SYMBOL(<ls_view>)
+              INDEX row_index.
+
+            CASE ev_function_name.
+
+              WHEN 'LINK_SUPER' OR 'LINK_SUB'.
+
+                DATA(lv_relation_level) = COND zscv_relation_level(
+                    WHEN ev_function_name = 'LINK_SUPER' THEN zscv_basic_view_relation_bo=>gcs__relation_level-super
+                    WHEN ev_function_name = 'LINK_SUB'   THEN zscv_basic_view_relation_bo=>gcs__relation_level-sub ).
+
+                zscv_basic_view_relation_bo=>create_relation(
+                  iv_db_table_name    = CONV #( <ls_view>-start_view_name )
+                  iv_cds_view_name    = CONV #( <ls_view>-abapviewname )
+                  iv_relation_level   = lv_relation_level
+                  iv_show_message_ind = abap_true ).
+
+                <ls_view>-basictablecdsviewind = 'X'.
+                <ls_view>-relationlevel = lv_relation_level.
+
+              WHEN 'LINK_DELE'.
+
+                DATA(lr_relation) = zscv_basic_view_relation_bo=>get_instance_by_table_name(
+                  iv_db_table_name = CONV #( <ls_view>-start_view_name )
+                  iv_cds_view_name  = CONV #( <ls_view>-abapviewname ) ).
+
+                lr_relation->delete_relation( ).
+
+                <ls_view>-basictablecdsviewind = ''.
+                <ls_view>-relationlevel = ''.
+
+            ENDCASE.
+
+            me->gr_view->refresh( ).
+
+          WHEN 'LINK_DELE'.
+
+
+        ENDCASE.
+
+      CATCH cx_root INTO DATA(lx_root).
+
+        MESSAGE lx_root->get_text( ) TYPE 'E'.
+
+    ENDTRY.
+
   ENDMETHOD.
 
   METHOD at_selection_screen.
@@ -1339,7 +1594,7 @@ CLASS zscv_main_ctl IMPLEMENTATION.
 
         IF s_dbtab[] IS INITIAL.
           "DB tables/views field is empty.
-          MESSAGE TEXT-200 TYPE 'I'.
+          MESSAGE |DB tables/views field is empty.| TYPE 'I'.
           RETURN.
         ENDIF.
 
@@ -1433,6 +1688,25 @@ CLASS zscv_main_ctl IMPLEMENTATION.
         s_viewtp[] = VALUE #(
           ( sign = 'I' option = 'EQ' low = '#BASIC' ) ).
 
+      WHEN 'VT_COMP'.
+        s_viewtp[] = VALUE #(
+          ( sign = 'I' option = 'EQ' low = '#COMPOSITE' ) ).
+
+      WHEN 'VT_CONS'.
+        s_viewtp[] = VALUE #(
+          ( sign = 'I' option = 'EQ' low = '#CONSUMPTION' ) ).
+
+      WHEN 'VT_EXT'.
+        s_viewtp[] = VALUE #(
+          ( sign = 'I' option = 'EQ' low = '#EXTENSION' ) ).
+
+      WHEN 'VT_TRAN'.
+        s_viewtp[] = VALUE #(
+          ( sign = 'I' option = 'EQ' low = '#TRANSACTIONAL' ) ).
+
+      WHEN 'VW_ALL'.
+        REFRESH s_viewtp[].
+
       WHEN 'DC_DIM'.
         s_datcat[] = VALUE #(
           ( sign = 'I' option = 'EQ' low = '#DIMENSION' ) ).
@@ -1447,6 +1721,10 @@ CLASS zscv_main_ctl IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD start_of_selection.
+
+  ENDMETHOD.
+
+  METHOD end_of_selection.
 
     TRY.
 
@@ -1491,78 +1769,16 @@ CLASS zscv_main_ctl IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD _show_data.
-
-    _create_field_catalogue( ).
 
     DATA layout      TYPE slis_layout_alv.
 
     MESSAGE |View count: { lines( view_list ) }| TYPE 'S'.
 
-    CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
-      EXPORTING
-        i_callback_program = sy-repid
-        "i_callback_user_command = 'USER_COMMAND'
-        it_fieldcat        = field_catalog[]
-        is_layout          = layout
-      TABLES
-        t_outtab           = view_list
-      EXCEPTIONS
-        program_error      = 1
-        OTHERS             = 2.
+    gr_view = zscv_cds_view_list_vw=>create_by_ref_data( REF #( view_list ) ).
+    SET HANDLER _on_view_function FOR me->gr_view.
 
-  ENDMETHOD.
-
-  METHOD _add_field_to_catalogue.
-
-    DATA: catalog_field TYPE slis_fieldcat_alv.
-
-    CLEAR: catalog_field.
-
-    catalog_field-col_pos       = column.
-    catalog_field-fieldname     = field.
-    catalog_field-tabname       = table.
-    catalog_field-outputlen     = length.
-    catalog_field-seltext_l     = text.
-    catalog_field-emphasize     = hot.
-    catalog_field-checkbox      = checkbox.
-
-    APPEND catalog_field TO field_catalog.
-
-  ENDMETHOD.
-
-
-  METHOD _create_field_catalogue.
-
-    _add_field_to_catalogue( column = '01' field = 'ABAPVIEWTYPE'           table = 'VIEW_LIST' length = '10' text = 'View Type'              hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '07' field = 'DDICVIEWNAME'           table = 'VIEW_LIST' length = '20' text = 'DDic Name'              hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '05' field = 'DDLSOURCENAME'          table = 'VIEW_LIST' length = '30' text = 'DDL Source Name'        hot = 'X' checkbox = ' ' ).
-
-    _add_field_to_catalogue( column = '30' field = 'C1_RELEASESTATE'        table = 'VIEW_LIST' length = '10' text = 'C1 Release State'           hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '32' field = 'C1_UseInKeyUserApps'    table = 'VIEW_LIST' length = '10' text =  'C1 Use In Key User Apps'   hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '34' field = 'C1_USEINCLOUDPLATFORM'  table = 'VIEW_LIST' length = '12' text = 'C1 Use In Cloud platform'   hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '40' field = 'C2_RELEASESTATE'        table = 'VIEW_LIST' length = '10' text = 'C2 Release State'           hot = 'X' checkbox = ' ' ).
-
-    _add_field_to_catalogue( column = '50' field = 'ENDUSERTEXTLABEL'               table = 'VIEW_LIST' length = '30' text = 'End User Text Label'  hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'DATACATEGORY'                   table = 'VIEW_LIST' length = '15' text = 'CDS Data Category'    hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'VDMVIEWTYPE'                    table = 'VIEW_LIST' length = '15' text = 'VDM View Type'        hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'ACCESSCONTROLAUTHCHECK'         table = 'VIEW_LIST' length = '10' text = 'Auth. check'          hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'OBJECTMODELUSAGETYPEDATACLASS'  table = 'VIEW_LIST' length = '15' text = 'Data Class'           hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'VDMLIFECYCLECONTRACTTYPE'       table = 'VIEW_LIST' length = '15' text = 'Contract Type'        hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'OBJECTMODELCREATEENABLED'       table = 'VIEW_LIST' length = '10' text = 'Object Model Create Enabled' hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '50' field = 'ODATAPUBLISH'                   table = 'VIEW_LIST' length = '10' text = 'OData Publish'        hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '50' field = 'RAPPUBLISH'                     table = 'VIEW_LIST' length = '10' text = 'RAP Serv.def.'        hot = 'X' checkbox = 'X' ).
-
-
-    _add_field_to_catalogue( column = '50' field = 'MetadataAllowExtensions'        table = 'VIEW_LIST' length = '10' text = '@Metadata.allowExtensions'  hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '50' field = 'SearchSearchable'               table = 'VIEW_LIST' length = '10' text = '@Search.searchable.'        hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '50' field = 'VdmUsageType1'                  table = 'VIEW_LIST' length = '10' text = '@VDM.usage.type 1'          hot = 'X' checkbox = '' ).
-    _add_field_to_catalogue( column = '50' field = 'ObjectModelSemanticKey1'        table = 'VIEW_LIST' length = '10' text = '@ObjectModel.semanticKey 1' hot = 'X' checkbox = '' ).
-
-
-    _add_field_to_catalogue( column = '70' field = 'CREATE_USER_NAME'               table = 'VIEW_LIST' length = '12' text = 'Last Changed User'    hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '72' field = 'CREATE_DATE'                    table = 'VIEW_LIST' length = '12' text = 'Last Changed Date'    hot = 'X' checkbox = ' ' ).
+    gr_view->display( ).
 
   ENDMETHOD.
 
@@ -1571,13 +1787,93 @@ ENDCLASS.
 "------------------------------------------------
 "Application
 "------------------------------------------------
-DATA main_controller TYPE REF TO zscv_main_ctl.
+DATA main_controller TYPE REF TO zscv_search_cds_views_ctl.
 
 LOAD-OF-PROGRAM.
 
   main_controller = NEW #( ).
 
 INITIALIZATION.
+
+  s_c1stat[] = VALUE #(
+    (
+      sign = 'I'
+      option = 'EQ'
+      low = 'RELEASED'
+    )
+  ).
+
+  p_c1abap = abap_true.
+
+  s_viewtp[] = VALUE #(
+    (
+      sign = 'I'
+      option = 'EQ'
+      low = '#BASIC'
+    )
+  ).
+
+
+  """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  "Selection screen texts - Language independent
+
+  tt_view = 'Source Selection'. "TEXT-101
+  pb_alltb = 'All tables'.         "text-006
+  pb_succr = 'Successor CDS view'. "text-007
+  pb_comp  = 'Compatibility tables'. "text-007
+  %_s_dbtab_%_app_%-text = 'DB Table / View'.
+
+  "%_s_fldnm_%_app_%-text = 'Field Name (AND-filter)'.
+  "%_s_dtelnm_%_app_%-text = 'Data Element Name (AND-filter)'.
+  "%_s_domnm_%_app_%-text = 'Domain Name (AND-filter)'.
+
+  tt_vtype = 'View types'. "TEXT-113.
+  %_vt_table_%_app_%-text = 'DDic Table'.
+  %_vt_ddvw_%_app_%-text  = 'DDic View'.
+  %_vt_ddcds_%_app_%-text = 'DDic CDS View'.
+  %_vt_entcd_%_app_%-text = 'Entity CDS View'.
+
+  tt_vname = 'View names'. "TEXT-102
+  pbcustvw = 'Custom ABAP views'. "TEXT-001
+  pbddicvw = 'Custom DDic Views'.  "TEXT-002
+  pbcstddl = 'Custom DDL source'.
+  tq_all = 'All views'. "TEXT-004
+
+  %_s_abapvw_%_app_%-text = 'ABAP View'.
+  tabapvw = 'ABAP View: For DDic CDS name use DDic name'.      "TEXT-104
+
+  %_s_ddicvw_%_app_%-text = 'DDic View Name'.
+  %_s_ddlnm_%_app_%-text = 'DDL Resource Name'.
+
+  tstat = 'CDS View Status'. "TEXT-103
+  tq_aball = 'ABAP C1 + C2'. "TEXT-105
+  tq_abap = 'Internal API (C1)'. "TEXT-106
+  tq_api = 'Public API (C2)'. "TEXT-107
+  tq_stall = 'All statuses'. "TEXT-108
+
+  %_s_c1stat_%_app_%-text = 'C1 Release state'.
+  %_p_c1kapp_%_app_%-text = 'C1 In Key user app allowed'.
+  %_p_c1abap_%_app_%-text = 'C1 In ABAP allowed'.
+  %_s_c2stat_%_app_%-text = 'C2 Release state'.
+
+  todata = 'OData'. "TEXT-112
+  %_s_odata_%_app_%-text = 'CDS @OData.publish ( X=true )'.
+  %_s_rapodt_%_app_%-text = 'RAP Service Definition'.
+
+  tviewtp = 'View Type'. "TEXT-109
+  tvtbasic = '#BASIC'.  "TEXT-008
+  tvtcomp = '#COMPOSITE'.
+  tvtcons = '#CONSUMPTION'.
+  tvtext = '#EXTENSION'.
+  tvtran = '#TRANSACTIONAL'.
+  tvw_all = 'All'.
+  %_s_viewtp_%_app_%-text = 'VDM View Type'.
+
+  datcat = ''.
+  tdc_dim = '#DIMENSION'. "TEXT-009
+  tdc_all = 'All'. " TEXT-010
+
+  %_s_datcat_%_app_%-text = 'Data Category'.
 
   main_controller->initialization( ).
 
@@ -1588,3 +1884,6 @@ AT SELECTION-SCREEN.
 START-OF-SELECTION.
 
   main_controller->start_of_selection( ).
+
+END-OF-SELECTION.
+  main_controller->end_of_selection( ).

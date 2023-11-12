@@ -9,7 +9,7 @@
 }
 define view entity ZSCV_AbapViewByView
   with parameters
-    p_AbapViewName                 :vibastab
+    p_AbapViewName :vibastab
 
   as select from ZSCV_AbapViewByViewGroupBy(
                  p_AbapViewName                  : $parameters.p_AbapViewName ) as AbapViewHier
@@ -22,9 +22,12 @@ define view entity ZSCV_AbapViewByView
                                                           and _DevObjectHeader.as4local = 'A'
                                                           and _DevObjectHeader.as4vers  = '0000'
 {
-  key AbapViewHier.AbapViewType as AbapViewType, 
+  key AbapViewHier.AbapViewType as AbapViewType,
   key AbapViewHier.AbapViewName as AbapViewName,
-  
+
+      _AbapView.BasicTableCdsViewInd,
+      _AbapView.RelationLevel,
+
       _AbapView.AbapViewName    as AbapViewName_Test,
       _AbapView.DdlSourceName   as DdlSourceName,
       _AbapView.DdicViewName    as DdicViewName,

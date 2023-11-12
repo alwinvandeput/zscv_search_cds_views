@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>ZSCV_FILL_CDS_RELATIONS</NAME>
+    <NAME>ZSCV_FILL_BASIC_RELATIONS</NAME>
     <DBAPL>S</DBAPL>
     <SUBC>1</SUBC>
     <FIXPT>X</FIXPT>
@@ -13,20 +13,8 @@
    <TPOOL>
     <item>
      <ID>R</ID>
-     <ENTRY>Fill CDS Relations</ENTRY>
-     <LENGTH>18</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_REFRSH</KEY>
-     <ENTRY>Refresh</ENTRY>
-     <LENGTH>15</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>S_CDS</KEY>
-     <ENTRY> CDS views</ENTRY>
-     <LENGTH>18</LENGTH>
+     <ENTRY>Basic CDS View Relations</ENTRY>
+     <LENGTH>24</LENGTH>
     </item>
    </TPOOL>
   </asx:values>
