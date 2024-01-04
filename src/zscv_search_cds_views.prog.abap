@@ -1179,7 +1179,7 @@ CLASS zscv_db_table_based_search_prc IMPLEMENTATION.
     lr_default_layout->set_sort_order(
       it_sort_order = VALUE #(
         (
-          field_name = 'DBTABLENAME'
+          field_name = 'ABAPVIEWNAME'
         )
       )
     ).
