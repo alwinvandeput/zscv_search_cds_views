@@ -193,7 +193,7 @@ CLASS zscv_run_bo IMPLEMENTATION.
     ENDIF.
 
     rs_run_check-completed_ind = abap_true.
-    rs_run_check-text = |Last update: { ls_update_index_run-end_timestamp  TIMESTAMP = USER }|.
+    rs_run_check-text = |Last update: { ls_update_index_run-end_timestamp  TIMESTAMP = USER TIMEZONE = sy-zonlo }|.
 
   ENDMETHOD.
 
