@@ -1,14 +1,11 @@
-@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AbapCatalog.sqlViewName: 'ZSCVBSCUNION'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #NOT_REQUIRED
-@EndUserText.label: 'Released C1 Basic views Union'
-@Metadata.ignorePropagatedAnnotations: true
-@ObjectModel.usageType:{
-    serviceQuality: #X,
-    sizeCategory: #S,
-    dataClass: #MIXED
-}
-define view entity ZSCV_ReleasedC1Basic_Union
-  as
+@EndUserText.label: 'ZSCV_ReleasedC1Basic_Union'
+define view ZSCV_ReleasedC1Basic_Union2 
+
+ as
 
   select from       zscv_cds_rel as _CdsRelation
     left outer join ZSCV_CdsView as AbapView on AbapView.DdlSourceName = _CdsRelation.parent_name

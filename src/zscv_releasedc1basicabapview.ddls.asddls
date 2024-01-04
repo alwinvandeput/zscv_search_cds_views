@@ -12,7 +12,7 @@ define view entity ZSCV_ReleasedC1BasicAbapView
 
   select
 
-  from              ZSCV_ReleasedC1Basic_Union as BasicView
+  from              ZSCV_ReleasedC1Basic_Union2 as BasicView
     left outer join ZSCV_AbapView              as AbapView   on AbapView.AbapViewName = BasicView.CdsName
 
     left outer join zscv_basic_view            as _BasicView on  _BasicView.cds_view_name = BasicView.CdsName
