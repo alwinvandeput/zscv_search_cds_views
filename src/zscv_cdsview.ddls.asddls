@@ -11,23 +11,34 @@ define view ZSCV_CdsView
 
     left outer join ddldependency as DdlToDdicLink on  DdlToDdicLink.ddlname    = DdlSource.obj_name
                                                    and DdlToDdicLink.objecttype = 'VIEW'
+                                                   and DdlToDdicLink.state      = 'A'
 
-  association [0..1] to ZSCV_CdsViewReleaseStatus   as _Status          on _Status.ViewName = $projection.DdlSourceName
+  association [0..1] to ZSCV_CdsViewReleaseStatus as _Status              on  _Status.ViewName = $projection.DdlSourceName
 
-  association [0..1] to ddheadanno                  as _Annotation      on _Annotation.strucobjn = $projection.DdlSourceName
-  association [0..1] to ZSCV_CdsViewServiceDefCount as _ServiceDefCount on _ServiceDefCount.DdlSourceName = $projection.DdlSourceName
+  association [0..1] to ddheadanno                as _Annotation          on  _Annotation.strucobjn = $projection.DdlSourceName
+  //association [0..1] to ZSCV_CdsViewServiceDefCount as _ServiceDefCount on _ServiceDefCount.DdlSourceName = $projection.DdlSourceName
+  association [0..1] to tadir                     as _RapBehaviorDef      on  _RapBehaviorDef.object   = 'BDEF'
+                                                                          and _RapBehaviorDef.pgmid    = 'R3TR'
+                                                                          and _RapBehaviorDef.obj_name = $projection.DdlSourceName
+  association [0..1] to ZSCV_ChildRapCdsView      as _ChildRapBehaviorDef on  _ChildRapBehaviorDef.entity = $projection.DdlSourceName
+  association [0..1] to zscv_cds_rel              as _CdsRelation         on  _CdsRelation.parent_name = $projection.DdlSourceName
 {
 
   key DdlSource.obj_name                                             as DdlSourceName,
-      DdlToDdicLink.objectname                                                 as DdicViewName,
+
+
+      DdlToDdicLink.ddlname                                          as LinkDddlName,
+      DdlToDdicLink.objectname                                       as LinkDdlObjectName,
+      DdlToDdicLink.state                                            as LinkDdlState,
+
+
+      DdlToDdicLink.objectname                                       as DdicViewName,
 
       //Child: DDic, DDic CDS, Entity CDS
       case
         when DdlToDdicLink.ddlname is null then 'Entity CDS'
         else 'DDic CDS'
         end                                                          as AbapViewType,
-
-
 
       DdlSource.created_on                                           as CreateDate,
       DdlSource.author                                               as CreateUser,
@@ -62,13 +73,22 @@ define view ZSCV_CdsView
         end                                                          as ODataPublish,
 
       case
-        when _ServiceDefCount.ServiceDefCount is not null and _ServiceDefCount.ServiceDefCount > 0
+        when _RapBehaviorDef.obj_name is not null
           then 'X'
         else ''
         end                                                          as RapPublish,
 
-      _Status
+      case
+        when _ChildRapBehaviorDef.entity is not null
+          then 'X'
+        else ''
+        end                                                          as ChildRapViewInd,
+
+      _Status,
+      _CdsRelation
 }
+
 where
-      DdlSource.pgmid  = 'R3TR'
-  and DdlSource.object = 'DDLS'
+      DdlSource.pgmid   =  'R3TR'
+  and DdlSource.object  =  'DDLS'
+  and DdlSource.delflag <> 'X'

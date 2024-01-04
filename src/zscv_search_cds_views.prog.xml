@@ -5,6 +5,7 @@
    <PROGDIR>
     <NAME>ZSCV_SEARCH_CDS_VIEWS</NAME>
     <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
     <SUBC>1</SUBC>
     <FIXPT>X</FIXPT>
     <LDBNAME>D$S</LDBNAME>
@@ -1942,8 +1943,8 @@
     </item>
     <item>
      <ID>R</ID>
-     <ENTRY>Search related CDS views by DB Table</ENTRY>
-     <LENGTH>36</LENGTH>
+     <ENTRY>CDS View Search</ENTRY>
+     <LENGTH>15</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

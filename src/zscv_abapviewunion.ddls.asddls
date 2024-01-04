@@ -3,7 +3,7 @@
 @AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'ABAP View Union'
-define view ZSCV_AbapViewUnion
+define view ZSCV_ABAPVIEWUNION
   as
 
   select from ZSCV_DdicTable
@@ -20,9 +20,9 @@ define view ZSCV_AbapViewUnion
       ''                          as EntityCdsViewInd
 }
 
-union all
+union
 
-//DDic Views and DDic CDS Views
+//DDic Views
 select from ZSCV_DdicView
 {
   key Dd25lViewName as AbapViewName,
@@ -46,7 +46,7 @@ select from ZSCV_DdicView
 where
   CdsViewInd = ''
 
-union all
+union
 
 select from ZSCV_CdsView
 {

@@ -16,7 +16,7 @@ define view entity ZSCV_AbapViewByView
 
   association [1..1] to ZSCV_AbapView as _AbapView        on  _AbapView.AbapViewName = $projection.AbapViewName
 
-  association [0..1] to ZSCV_CdsView  as _CdsView         on  _CdsView.DdlSourceName = $projection.AbapViewName
+  association [0..*] to ZSCV_CdsView  as _CdsView         on  _CdsView.DdlSourceName = $projection.AbapViewName
 
   association [0..1] to dd25l         as _DevObjectHeader on  _DevObjectHeader.viewname = AbapViewHier.AbapViewName
                                                           and _DevObjectHeader.as4local = 'A'

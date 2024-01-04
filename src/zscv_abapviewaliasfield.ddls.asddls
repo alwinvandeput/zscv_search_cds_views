@@ -10,39 +10,10 @@ define view ZSCV_AbapViewAliasField
 {
   key AbapViewType,
   key TableName as AbapViewName,
-  key FieldName as FieldName,
-      DataElementName,
-      DomainName
+  key concat('\TY:', concat(TableName, concat('\TY:', FieldName))) as FullFieldName
+//      DataElementName,
+//      DomainName
 }
-
-union all
-
-//DDic Views Alias Field and DDic CDS Views Alias Field
-select from ZSCV_DdicViewAliasField
-{
-  key AbapViewType as AbapViewType,
-  key Tabname      as AbapViewName,
-  key Fieldname    as FieldName,
-      DataElementName,
-      DomainName
-}
-
-union all
-
-//Entity CDS View Alias Field
-select from       ZSCV_CdsViewSourceField as Field
-  left outer join dd03l                   as DdicField on  DdicField.tabname = Field.AbapViewType
-                                                       and DdicField.tabname = Field.AbapViewName
-
-{
-  key Field.AbapViewType,
-  key Field.AbapViewName as AbapViewName,
-  key Field.Field        as FieldName,
-      DdicField.rollname as DataElementName,
-      DdicField.domname  as DomainName
-}
-where
-  Field.AbapViewType = 'DDic CDS'
 
 union all
 
@@ -51,12 +22,52 @@ select from ZSCV_CdsViewSourceField
 {
   key AbapViewType,
   key AbapViewName as AbapViewName,
-  key Field        as FieldName,
-      ''           as DataElementName,
-      ''           as DomainName
+  key FullFieldName        as FullFieldName
 }
-where
-  AbapViewType = 'Entity CDS'
+
+
+//union all
+//
+////DDic Views Alias Field and DDic CDS Views Alias Field
+//select from ZSCV_DdicViewAliasField
+//{
+//  key AbapViewType as AbapViewType,
+//  key Tabname      as AbapViewName,
+//  key Fieldname    as FieldName,
+//      DataElementName,
+//      DomainName
+//}
+
+//union all
+//
+////Entity CDS View Alias Field
+//select from       ZSCV_CdsViewSourceField as Field
+//  left outer join dd03l                   as DdicField on  DdicField.tabname = Field.AbapViewType
+//                                                       and DdicField.tabname = Field.AbapViewName
+//
+//{
+//  key Field.AbapViewType,
+//  key Field.AbapViewName as AbapViewName,
+//  key Field.Field        as FieldName,
+//      DdicField.rollname as DataElementName,
+//      DdicField.domname  as DomainName
+//}
+//where
+//  Field.AbapViewType = 'DDic CDS'
+
+//union all
+//
+////DDic and Entity CDS View Alias Field
+//select from ZSCV_CdsViewSourceField
+//{
+//  key AbapViewType,
+//  key AbapViewName as AbapViewName,
+//  key Field        as FieldName,
+//      ''           as DataElementName,
+//      ''           as DomainName
+//}
+//where
+//  AbapViewType = 'Entity CDS'
 
 /*
 //Entity CDS View Alias Field
