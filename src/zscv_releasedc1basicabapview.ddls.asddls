@@ -28,21 +28,24 @@ define view entity ZSCV_ReleasedC1BasicAbapView
       @EndUserText.label: 'Text'
       AbapView._CdsView.EndUserTextLabel,
         
-      @EndUserText.label: 'DDL Type'
+      @EndUserText.label: 'Parent DDL Type'
       AbapView._CdsRelation.parent_ddl_type as ParentDdlType,
       
       @EndUserText.label: 'ABAP View Type'
       AbapView.AbapViewType,
       
-      @EndUserText.label: 'VDM View Type'
+      //VDM
+      @EndUserText.label: 'View Type (VDM)'
       AbapView._CdsView.VdmViewType,
       
-      @EndUserText.label: 'Data Category'
-      AbapView._CdsView.DataCategory,
-
+      @EndUserText.label: 'Contract Type (VDM)'
+      AbapView._CdsView.VdmLifeCycleContractType,
+      
+      //Exists
       @EndUserText.label: 'Exists in this system'
       BasicView.ExistsInd,
-
+      
+      //API
       @EndUserText.label: 'C1 Release State'
       BasicView.C1_ReleaseState,
 
@@ -55,32 +58,47 @@ define view entity ZSCV_ReleasedC1BasicAbapView
       @EndUserText.label: 'C2 Release State'
       AbapView._CdsView._Status.C2_ReleaseState,
 
+      //Object Model
+      @EndUserText.label: 'Data Category (Object Model)'
+      AbapView._CdsView.ObjectModelDataCategory,
+      
+      @EndUserText.label: 'Data Class (Object Model)'
+      AbapView._CdsView.ObjectModelUsageTypeDataClass,
+      
+      @EndUserText.label: 'Create Enabled (Object Model)'
+      AbapView._CdsView.ObjectModelCreateEnabled,
+      
+      //Analytics
+      @EndUserText.label: 'Query (Analytics)'
+      AbapView._CdsView.AnalyticsQueryInd,
+      
+      @EndUserText.label: 'Data Category (Analytics)'
+      AbapView._CdsView.AnalyticsDataCategory,
+      
+      //OData / RAP
       @EndUserText.label: 'View OData'
       AbapView._CdsView.ODataPublish,
 
       @EndUserText.label: 'Main RAP'
       AbapView._CdsView.RapPublish,
-
+            
       @EndUserText.label: 'Secondairy RAP'
       AbapView._CdsView.ChildRapViewInd,
-
-      @EndUserText.label: 'Analyticds Query'
-      AbapView._CdsView.EmbeddedAnalyticsQueryInd,
       
+      //Maintenance
+      @EndUserText.label: 'Create Date'
       AbapView._CdsView.CreateDate,
+      
+      @EndUserText.label: 'Create User'
       AbapView._CdsView.CreateUser,
 
       @EndUserText.label: 'Auth. Check'
       AbapView._CdsView.AccessControlAuthCheck,
-
-      @EndUserText.label: 'Data Class'
-      AbapView._CdsView.ObjectModelUsageTypeDataClass,
-
-      @EndUserText.label: 'Contract Type'
-      AbapView._CdsView.VdmLifeCycleContractType,
       
-      @EndUserText.label: 'Relation Level'
-      _BasicView.relation_level as RelationLevel
+      @EndUserText.label: 'Metadata Extensions Allowed'
+      AbapView._CdsView.MetadataAllowExtensions,
 
+      @EndUserText.label: 'DDic name'
+      AbapView._CdsView.DdicViewName
 }
 where BasicView.CdsName is not initial

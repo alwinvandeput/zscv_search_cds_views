@@ -9,8 +9,8 @@ define view ZSCV_AbapViewAliasField
   select from ZSCV_DdicTableField
 {
   key AbapViewType,
-  key TableName as AbapViewName,
-  key concat('\TY:', concat(TableName, concat('\TY:', FieldName))) as FullFieldName
+  key cast(TableName as ddlname) as AbapViewName,
+  key cast(concat('\TY:', concat(TableName, concat('\TY:', FieldName))) as abap.sstring(400))  as FullFieldName
 //      DataElementName,
 //      DomainName
 }

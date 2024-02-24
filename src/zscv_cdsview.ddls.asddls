@@ -26,11 +26,9 @@ define view ZSCV_CdsView
 
   key DdlSource.obj_name                                             as DdlSourceName,
 
-
       DdlToDdicLink.ddlname                                          as LinkDddlName,
       DdlToDdicLink.objectname                                       as LinkDdlObjectName,
       DdlToDdicLink.state                                            as LinkDdlState,
-
 
       DdlToDdicLink.objectname                                       as DdicViewName,
 
@@ -40,32 +38,41 @@ define view ZSCV_CdsView
         else 'DDic CDS'
         end                                                          as AbapViewType,
 
-      DdlSource.created_on                                           as CreateDate,
-      DdlSource.author                                               as CreateUser,
-      _Annotation[ name = 'ANALYTICS.QUERY' ].value                  as EmbeddedAnalyticsQueryInd,
-      _Annotation[ name = 'ANALYTICS.DATACATEGORY' ].value           as DataCategory,
-
-      _Annotation[ name = 'ENDUSERTEXT.LABEL' ].value                as EndUserTextLabel,
-      _Annotation[ name = 'VDM.VIEWTYPE' ].value                     as VdmViewType,
-      _Annotation[ name = 'ACCESSCONTROL.AUTHORIZATIONCHECK' ].value as AccessControlAuthCheck,
+      _Annotation[ name = 'OBJECTMODEL.DATACATEGORY' ].value         as ObjectModelDataCategory,
       _Annotation[ name = 'OBJECTMODEL.USAGETYPE.DATACLASS' ].value  as ObjectModelUsageTypeDataClass,
-      _Annotation[ name = 'VDM.LIFECYCLE.CONTRACT.TYPE' ].value      as VdmLifeCycleContractType,
       _Annotation[ name = 'OBJECTMODEL.CREATEENABLED' ].value        as ObjectModelCreateEnabled,
+      
+      //Embedded Analytics
+      //_Annotation[ name = 'ANALYTICS.QUERY' ].value as AnalyticsQuery,
+      case _Annotation[ name = 'ANALYTICS.QUERY' ].value
+        when 'true' then 'X'
+        else ''
+        end      
+        as AnalyticsQueryInd,      
+      _Annotation[ name = 'ANALYTICS.DATACATEGORY' ].value           as AnalyticsDataCategory,
 
+      //VDM
+      _Annotation[ name = 'VDM.VIEWTYPE' ].value                     as VdmViewType,
+      _Annotation[ name = 'VDM.LIFECYCLE.CONTRACT.TYPE' ].value      as VdmLifeCycleContractType,
+      _Annotation[ name = 'VDM.USAGE.TYPE$1$' ].value                as VdmUsageType1,
+      
+      //Text
+      _Annotation[ name = 'ENDUSERTEXT.LABEL' ].value                as EndUserTextLabel,
+
+      //Authorization
+      _Annotation[ name = 'ACCESSCONTROL.AUTHORIZATIONCHECK' ].value as AccessControlAuthCheck,
+
+      //Meta data
       case _Annotation[ name = 'METADATA.ALLOWEXTENSIONS' ].value
-        when  'true' then 'X'
+        when 'true' then 'X'
         else ''
         end                                                          as MetadataAllowExtensions,
+        
+      //Search
       case _Annotation[ name = 'SEARCH.SEARCHABLE' ].value
-        when  'true' then 'X'
+        when 'true' then 'X'
         else ''
         end                                                          as SearchSearchable,
-
-      _Annotation[ name = 'VDM.USAGE.TYPE$1$' ].value                as VdmUsageType1,
-      _Annotation[ name = 'OBJECTMODEL.SEMANTICKEY$1$' ].value       as ObjectModelSemanticKey1,
-      _Annotation[ name = 'OBJECTMODEL.SEMANTICKEY$2$' ].value       as ObjectModelSemanticKey2,
-      _Annotation[ name = 'OBJECTMODEL.SEMANTICKEY$3$' ].value       as ObjectModelSemanticKey3,
-
 
       case _Annotation[name = 'ODATA.PUBLISH' ].value
         when  'true' then 'X'
@@ -83,6 +90,13 @@ define view ZSCV_CdsView
           then 'X'
         else ''
         end                                                          as ChildRapViewInd,
+      
+      _Annotation[ name = 'OBJECTMODEL.SEMANTICKEY$1$' ].value       as ObjectModelSemanticKey1,
+      _Annotation[ name = 'OBJECTMODEL.SEMANTICKEY$2$' ].value       as ObjectModelSemanticKey2,
+      _Annotation[ name = 'OBJECTMODEL.SEMANTICKEY$3$' ].value       as ObjectModelSemanticKey3,
+
+      DdlSource.created_on                                           as CreateDate,
+      DdlSource.author                                               as CreateUser,
 
       _Status,
       _CdsRelation

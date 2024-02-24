@@ -20,7 +20,10 @@ REPORT zscv_search_cds_views.
 "--------------------------------------------------------------------
 
 TABLES: ars_w_api_state, dd26s, sscrfields.
+
 DATA db_view_name_type TYPE vibastab.
+DATA tv_boolean TYPE t001-xfdis.
+DATA tv_annotation_value TYPE ddannotation_val.
 
 SELECTION-SCREEN BEGIN OF BLOCK view_index WITH FRAME TITLE tt_index.
 
@@ -142,9 +145,9 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
     "All
     SELECTION-SCREEN  PUSHBUTTON 21(18) tdc_all USER-COMMAND dc_all.
 
-    "Data Category
-    DATA data_category_type TYPE ddannotation_val.
-    SELECT-OPTIONS s_datcat FOR data_category_type.
+    "Analytics
+    SELECT-OPTIONS s_anaqry  FOR tv_boolean.
+    SELECT-OPTIONS s_anadc   FOR tv_annotation_value.
 
   SELECTION-SCREEN END OF BLOCK datcat.
 
@@ -159,9 +162,8 @@ SELECTION-SCREEN BEGIN OF BLOCK sel WITH FRAME.
     SELECTION-SCREEN  PUSHBUTTON 43(15) tq_stall USER-COMMAND q_stall.
 
     SELECT-OPTIONS s_c1stat FOR ars_w_api_state-release_state.
-    DATA lv_boolean TYPE t001-xfdis.
-    SELECT-OPTIONS s_c1kapp FOR lv_boolean.
-    SELECT-OPTIONS s_c1abap FOR lv_boolean.
+    SELECT-OPTIONS s_c1kapp FOR tv_boolean.
+    SELECT-OPTIONS s_c1abap FOR tv_boolean.
     SELECT-OPTIONS s_c2stat FOR ars_w_api_state-release_state.
 
   SELECTION-SCREEN END OF BLOCK stat.
@@ -433,41 +435,53 @@ CLASS zscv_view_search_dp DEFINITION.
   PUBLIC SECTION.
 
     TYPES:
+
+      "This structure determines column sequence in the hierarchically search result.
       BEGIN OF ts_ddic_view,
         abapviewname                  TYPE zscv_abapviewbyview-abapviewname,
         endusertextlabel              TYPE ddheadanno-value,
 
-        relationlevel                 TYPE zscv_abapviewbyview-relationlevel,
+        "relationlevel                 TYPE zscv_abapviewbyview-relationlevel,
         abapviewtype                  TYPE c LENGTH 10,
-        vdmviewtype                   TYPE ddheadanno-value,
-        datacategory                  TYPE ddannotation_val,
 
+        "VDM
+        vdmviewtype                   TYPE ddheadanno-value,
+        vdmlifecyclecontracttype      TYPE ddheadanno-value,
+
+        "API state
         c1_releasestate               TYPE ars_w_api_state-release_state,
         c1_useinkeyuserapps           TYPE abap_bool,
         c1_useincloudplatform         TYPE abap_bool,
 
         c2_releasestate               TYPE ars_w_api_state-release_state,
-        c2_useinkeyuserapps           TYPE abap_bool,
-        c2_useincloudplatform         TYPE abap_bool,
 
-        accesscontrolauthcheck        TYPE ddheadanno-value,
+        "Object Model
+        objectmodeldatacategory       TYPE ddheadanno-value,
         objectmodelusagetypedataclass TYPE ddheadanno-value,
-        vdmlifecyclecontracttype      TYPE ddheadanno-value,
         objectmodelcreateenabled      TYPE ddheadanno-value,
+
+        "Analytics
+        analyticsqueryind             TYPE abap_bool,
+        analyticsdatacategory         TYPE ddannotation_val,
+
+        "OData
         odatapublish                  TYPE ddheadanno-value,
         rappublish                    TYPE ddheadanno-value,
         childrapviewind               TYPE ddheadanno-value,
-        embeddedanalyticsqueryind     TYPE abap_bool,
 
+        "Authorization
+        accesscontrolauthcheck        TYPE ddheadanno-value,
 
+        "Creation
+        create_user_name              TYPE dd02l-as4user,
+        create_date                   TYPE dd02l-as4date,
+        create_time                   TYPE dd02l-as4time,
+
+        "Others
         metadataallowextensions       TYPE ddheadanno-value,
         searchsearchable              TYPE ddheadanno-value,
         vdmusagetype1                 TYPE ddheadanno-value,
         objectmodelsemantickey1       TYPE ddheadanno-value,
-
-        create_user_name              TYPE dd02l-as4user,
-        create_date                   TYPE dd02l-as4date,
-        create_time                   TYPE dd02l-as4time,
 
         start_view_name               TYPE dd26s-viewname,
 
@@ -623,8 +637,9 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
        abapview~abapviewname,
 
        abapview~ddlsourcename,
-       \_cdsview-datacategory,
-       \_cdsview-embeddedanalyticsqueryind,
+
+       \_cdsview-analyticsqueryind,
+       \_cdsview-analyticsdatacategory,
 
        abapview~ddicviewname,
 
@@ -637,9 +652,12 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
         \_cdsview-endusertextlabel,
         \_cdsview-vdmviewtype,
         \_cdsview-accesscontrolauthcheck,
+
+        \_cdsview-objectmodeldatacategory,
         \_cdsview-objectmodelusagetypedataclass,
-        \_cdsview-vdmlifecyclecontracttype,
         \_cdsview-objectmodelcreateenabled,
+
+        \_cdsview-vdmlifecyclecontracttype,
         \_cdsview-odatapublish,
         \_cdsview-rappublish,
         \_cdsview-childrapviewind,
@@ -669,7 +687,8 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
           \_cdsview-odatapublish    IN @s_odata[] AND
           \_cdsview-rappublish      IN @s_rapodt[] AND
           \_cdsview-childrapviewind IN @s_chdrap[] AND
-          \_cdsview-datacategory    IN @s_datcat[]
+          \_cdsview-analyticsqueryind         IN @s_anaqry[] AND
+          \_cdsview-analyticsdatacategory  IN @s_anadc[]
 
           ORDER BY
             abapview~ddlsourcename,
@@ -856,13 +875,19 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
 
         SELECT
            abapview~basictablecdsviewind,
-           abapview~relationlevel,
+           "abapview~relationlevel,
            abapview~abapviewtype,
            abapview~abapviewname,
 
            abapview~ddlsourcename,
-           \_cdsview-datacategory,
-           \_cdsview-embeddedanalyticsqueryind,
+
+            \_cdsview-objectmodeldatacategory,
+            \_cdsview-objectmodelusagetypedataclass,
+            \_cdsview-objectmodelcreateenabled,
+
+           "Embedded Analytics
+           \_cdsview-analyticsqueryind,
+           \_cdsview-analyticsdatacategory,
 
            abapview~ddicviewname,
 
@@ -875,9 +900,9 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
             \_cdsview-endusertextlabel,
             \_cdsview-vdmviewtype,
             \_cdsview-accesscontrolauthcheck,
-            \_cdsview-objectmodelusagetypedataclass,
+
             \_cdsview-vdmlifecyclecontracttype,
-            \_cdsview-objectmodelcreateenabled,
+
             \_cdsview-odatapublish,
             \_cdsview-rappublish,
             \_cdsview-childrapviewind,
@@ -908,7 +933,8 @@ CLASS zscv_view_search_dp IMPLEMENTATION.
               \_cdsview-odatapublish    IN @s_odata[] AND
               \_cdsview-rappublish      IN @s_rapodt[] AND
               \_cdsview-childrapviewind IN @s_chdrap[] AND
-              \_cdsview-datacategory    IN @s_datcat[]
+              \_cdsview-analyticsqueryind      IN @s_anaqry[] AND
+              \_cdsview-analyticsdatacategory  IN @s_anadc[]
 
           ORDER BY
             \_cdsview-ddlsourcename,
@@ -1216,8 +1242,12 @@ CLASS zscv_db_table_based_search_prc IMPLEMENTATION.
       it_ranges = s_viewtp[] ).
 
     lr_selection->add_ranges_for_name(
-      iv_name = 'DATACATEGORY'
-      it_ranges = s_datcat[] ).
+      iv_name = 'ANALYTICSQUERYIND'
+      it_ranges = s_anaqry[] ).
+
+    lr_selection->add_ranges_for_name(
+      iv_name = 'ANALYTICSDATACATEGORY'
+      it_ranges = s_anadc[] ).
 
     lr_selection->add_ranges_for_name(
       iv_name = 'ODATAPUBLISH'
@@ -1547,35 +1577,40 @@ CLASS zscv_cds_view_list_vw IMPLEMENTATION.
     DATA(lo_column_list)  = io_gr_alv->get_columns( ).
     lo_column_list->set_optimize( 'X' ).
 
-    _add_field_to_catalogue( column = '07' field = 'DDICVIEWNAME'                   table = 'VIEW_LIST' length = '20' text = 'DDic Name'              hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '09' field = 'ENDUSERTEXTLABEL'               table = 'VIEW_LIST' length = '30' text = 'End User Text Label'  hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'DDLSOURCENAME'                  table = 'VIEW_LIST' length = '30' text = 'DDL Source Name'                hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'DDICVIEWNAME'                   table = 'VIEW_LIST' length = '20' text = 'DDic Name'                      hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'ENDUSERTEXTLABEL'               table = 'VIEW_LIST' length = '30' text = 'End User Text Label'            hot = 'X' checkbox = ' ' ).
 
-    _add_field_to_catalogue( column = '10' field = 'ABAPVIEWTYPE'                   table = 'VIEW_LIST' length = '10' text = 'View Type'              hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '12' field = 'DATACATEGORY'                   table = 'VIEW_LIST' length = '15' text = 'CDS Data Category'    hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '14' field = 'VDMVIEWTYPE'                    table = 'VIEW_LIST' length = '15' text = 'VDM View Type'        hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'ABAPVIEWTYPE'                   table = 'VIEW_LIST' length = '10' text = 'View Type'                      hot = 'X' checkbox = ' ' ).
 
-    _add_field_to_catalogue( column = '30' field = 'C1_RELEASESTATE'                table = 'VIEW_LIST' length = '10' text = 'C1 Release State'           hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '32' field = 'C1_UseInKeyUserApps'            table = 'VIEW_LIST' length = '10' text =  'C1 Use In Key User Apps'   hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '34' field = 'C1_USEINCLOUDPLATFORM'          table = 'VIEW_LIST' length = '12' text = 'C1 Use In Cloud platform'   hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '40' field = 'C2_RELEASESTATE'                table = 'VIEW_LIST' length = '10' text = 'C2 Release State'           hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'VDMVIEWTYPE'                    table = 'VIEW_LIST' length = '15' text = 'VDM View Type'                  hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'VDMLIFECYCLECONTRACTTYPE'       table = 'VIEW_LIST' length = '15' text = 'Contract Type (VDM)'                  hot = 'X' checkbox = ' ' ).
 
-    _add_field_to_catalogue( column = '50' field = 'ACCESSCONTROLAUTHCHECK'         table = 'VIEW_LIST' length = '10' text = 'Auth. check'          hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '52' field = 'OBJECTMODELUSAGETYPEDATACLASS'  table = 'VIEW_LIST' length = '15' text = 'Data Class'           hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '54' field = 'VDMLIFECYCLECONTRACTTYPE'       table = 'VIEW_LIST' length = '15' text = 'Contract Type'        hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '56' field = 'OBJECTMODELCREATEENABLED'       table = 'VIEW_LIST' length = '10' text = 'Object Model Create Enabled' hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '58' field = 'ODATAPUBLISH'                   table = 'VIEW_LIST' length = '10' text = 'OData Publish'        hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '60' field = 'RAPPUBLISH'                     table = 'VIEW_LIST' length = '10' text = 'RAP Serv.def.'        hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'C1_RELEASESTATE'                table = 'VIEW_LIST' length = '10' text = 'C1 Release State'               hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'C1_USEINKEYUSERAPPS'            table = 'VIEW_LIST' length = '10' text =  'C1 Use In Key User Apps'       hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'C1_USEINCLOUDPLATFORM'          table = 'VIEW_LIST' length = '12' text = 'C1 Use In Cloud platform'       hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'C2_RELEASESTATE'                table = 'VIEW_LIST' length = '10' text = 'C2 Release State'               hot = 'X' checkbox = ' ' ).
 
-    _add_field_to_catalogue( column = '62' field = 'METADATAALLOWEXTENSIONS'        table = 'VIEW_LIST' length = '10' text = '@Metadata.allowExtensions'  hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '64' field = 'SEARCHSEARCHABLE'               table = 'VIEW_LIST' length = '10' text = '@Search.searchable.'        hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '66' field = 'VDMUSAGETYPE1'                  table = 'VIEW_LIST' length = '10' text = '@VDM.usage.type 1'          hot = 'X' checkbox = '' ).
-    _add_field_to_catalogue( column = '68' field = 'OBJECTMODELSEMANTICKEY1'        table = 'VIEW_LIST' length = '10' text = '@ObjectModel.semanticKey 1' hot = 'X' checkbox = '' ).
+    _add_field_to_catalogue( column = '' field = 'OBJECTMODELDATACATEGORY'        table = 'VIEW_LIST' length = '15' text = 'Data Category (Object Model)'   hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'OBJECTMODELUSAGETYPEDATACLASS'  table = 'VIEW_LIST' length = '15' text = 'Data Class (Object Model)'      hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'OBJECTMODELCREATEENABLED'       table = 'VIEW_LIST' length = '10' text = 'Create Enabled (Object Model)'  hot = 'X' checkbox = ' ' ).
 
-    _add_field_to_catalogue( column = '70' field = 'CREATE_USER_NAME'               table = 'VIEW_LIST' length = '12' text = 'Last Changed User'    hot = 'X' checkbox = ' ' ).
-    _add_field_to_catalogue( column = '72' field = 'CREATE_DATE'                    table = 'VIEW_LIST' length = '12' text = 'Last Changed Date'    hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'ANALYTICSQUERYIND'              table = 'VIEW_LIST' length = '15' text = 'Query (Analytics)'              hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'ANALYTICSDATACATEGORY'          table = 'VIEW_LIST' length = '15' text = 'Data Category (Analytics)'      hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'ACCESSCONTROLAUTHCHECK'         table = 'VIEW_LIST' length = '10' text = 'Auth. check'                    hot = 'X' checkbox = ' ' ).
 
-    _add_field_to_catalogue( column = '80' field = 'BASICTABLECDSVIEWIND'           table = 'VIEW_LIST' length = '1' text = 'DB Table Basic CDS View'              hot = 'X' checkbox = 'X' ).
-    _add_field_to_catalogue( column = '05' field = 'DDLSOURCENAME'                  table = 'VIEW_LIST' length = '30' text = 'DDL Source Name'        hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'ODATAPUBLISH'                   table = 'VIEW_LIST' length = '10' text = 'OData Publish'                  hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'RAPPUBLISH'                     table = 'VIEW_LIST' length = '10' text = 'RAP Serv.def.'                  hot = 'X' checkbox = 'X' ).
+
+    _add_field_to_catalogue( column = '' field = 'METADATAALLOWEXTENSIONS'        table = 'VIEW_LIST' length = '10' text = '@Metadata.allowExtensions'      hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'SEARCHSEARCHABLE'               table = 'VIEW_LIST' length = '10' text = '@Search.searchable.'            hot = 'X' checkbox = 'X' ).
+    _add_field_to_catalogue( column = '' field = 'VDMUSAGETYPE1'                  table = 'VIEW_LIST' length = '10' text = '@VDM.usage.type 1'              hot = 'X' checkbox = '' ).
+    _add_field_to_catalogue( column = '' field = 'OBJECTMODELSEMANTICKEY1'        table = 'VIEW_LIST' length = '10' text = '@ObjectModel.semanticKey 1'     hot = 'X' checkbox = '' ).
+
+    _add_field_to_catalogue( column = '' field = 'CREATE_USER_NAME'               table = 'VIEW_LIST' length = '12' text = 'Last Changed User'              hot = 'X' checkbox = ' ' ).
+    _add_field_to_catalogue( column = '' field = 'CREATE_DATE'                    table = 'VIEW_LIST' length = '12' text = 'Last Changed Date'              hot = 'X' checkbox = ' ' ).
+
+    _add_field_to_catalogue( column = '' field = 'BASICTABLECDSVIEWIND'           table = 'VIEW_LIST' length = '1' text = 'DB Table Basic CDS View'         hot = 'X' checkbox = 'X' ).
 
 
   ENDMETHOD.
@@ -1747,7 +1782,7 @@ CLASS zscv_search_cds_views_ctl IMPLEMENTATION.
                   iv_show_message_ind = abap_true ).
 
                 <ls_view>-basictablecdsviewind = 'X'.
-                <ls_view>-relationlevel = lv_relation_level.
+                "<ls_view>-relationlevel = lv_relation_level.
 
               WHEN 'LINK_DELE'.
 
@@ -1758,7 +1793,7 @@ CLASS zscv_search_cds_views_ctl IMPLEMENTATION.
                 lr_relation->delete_relation( ).
 
                 <ls_view>-basictablecdsviewind = ''.
-                <ls_view>-relationlevel = ''.
+                "<ls_view>-relationlevel = ''.
 
             ENDCASE.
 
@@ -2130,11 +2165,11 @@ CLASS zscv_search_cds_views_ctl IMPLEMENTATION.
         REFRESH s_viewtp[].
 
       WHEN 'DC_DIM'.
-        s_datcat[] = VALUE #(
+        s_anadc[] = VALUE #(
           ( sign = 'I' option = 'EQ' low = '#DIMENSION' ) ).
 
       WHEN 'DC_ALL'.
-        REFRESH s_datcat[].
+        REFRESH s_anadc[].
 
       WHEN OTHERS.
 
@@ -2309,11 +2344,12 @@ INITIALIZATION.
   tvw_all = 'All'.
   %_s_viewtp_%_app_%-text = 'VDM View Type'.
 
-  datcat = 'Data Category'.
+  datcat = 'Analytics'.
   tdc_dim = '#DIMENSION'. "TEXT-009
   tdc_all = 'All'. " TEXT-010
 
-  %_s_datcat_%_app_%-text = 'Data Category'.
+  %_s_anaqry_%_app_%-text = 'Analytics - Query'.
+  %_s_anadc_%_app_%-text = 'Analytics - Data Category'.
 
   main_controller->initialization( ).
 

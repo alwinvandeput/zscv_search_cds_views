@@ -83,6 +83,12 @@ CLASS zscv_cds_relation_index_prc DEFINITION
 
     METHODS remove_deleted_views.
 
+    METHODS get_abstract_syntax_tree
+      IMPORTING
+        iv_ddl_name                        TYPE ddddlsrc-ddlname
+      RETURNING
+        VALUE(rr_ddl_abstract_syntax_tree) TYPE REF TO cl_qlast_ddlstmt.
+
 ENDCLASS.
 
 CLASS zscv_cds_relation_index_prc IMPLEMENTATION.
@@ -355,13 +361,7 @@ CLASS zscv_cds_relation_index_prc IMPLEMENTATION.
 
         REFRESH gt_cds_rel_update.
 
-        "Not available on S/4HANA 2020
-        "DATA(lr_ddl_abstract_syntax_tree) = cl_qlast_utility=>get_ast_for_active_ddls( <lv_ddl_name>-ddlname ).
-
-        "Now compatible with S/4HANA 2020
-        DATA(lr_ddl_abstract_syntax_tree) = cl_qlast_utility=>get_ast_for_ddls(
-          i_ddlsname = iv_ddl_name
-          i_version  = if_dd_sobject_constants=>get_a ).
+        DATA(lr_ddl_abstract_syntax_tree) = get_abstract_syntax_tree( iv_ddl_name ).
 
         append_statement_ast(
           iv_parent_ddl_name = iv_ddl_name
@@ -475,6 +475,45 @@ CLASS zscv_cds_relation_index_prc IMPLEMENTATION.
       COMMIT WORK.
 
     ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD get_abstract_syntax_tree.
+
+    "Version 757 is S/4HANA 2022.
+    IF sy-saprl < 757.
+
+      "This code is available on S/4HANA 2020.
+      "Is not available on S/4HANA 2023.
+
+      "lr_ddl_abstract_syntax_tree = cl_qlast_utility=>get_ast_for_ddls(
+      "  i_ddlsname = iv_ddl_name
+      "  i_version  = if_dd_sobject_constants=>get_a ).
+
+      "Dynamic call for being forwards compatible
+      CALL METHOD cl_qlast_utility=>('GET_AST_FOR_DDLS')
+        EXPORTING
+          i_ddlsname = iv_ddl_name
+          i_version  = if_dd_sobject_constants=>get_a
+        RECEIVING
+          r_ast_tree = rr_ddl_abstract_syntax_tree.
+
+    ELSE.
+
+      "The method get_ast_for_active_ddls is available on S/4HANA 2022.
+      "Is not available on S/4HANA 2020
+
+      "lr_ddl_abstract_syntax_tree = cl_qlast_utility=>get_ast_for_active_ddls( iv_ddl_name ).
+
+      "Dynamic call for being backwards compatible
+      CALL METHOD cl_qlast_utility=>('GET_AST_FOR_ACTIVE_DDLS')
+        EXPORTING
+          ddls_name = iv_ddl_name
+        RECEIVING
+          ast       = rr_ddl_abstract_syntax_tree.
+
+    ENDIF.
 
   ENDMETHOD.
 

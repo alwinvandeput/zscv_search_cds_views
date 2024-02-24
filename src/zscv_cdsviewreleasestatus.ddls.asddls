@@ -56,6 +56,8 @@ define view ZSCV_CdsViewReleaseStatus
     else ''
     end                              as C2_Exists,
   state_c2.release_state             as C2_ReleaseState
+//  state_c2.use_in_key_user_apps      as C2_UseInKeyUserApps,
+//  state_c2.use_in_sap_cloud_platform as C2_UseInCloudPlatform
 }
 where
       tadir.pgmid  = 'R3TR'
