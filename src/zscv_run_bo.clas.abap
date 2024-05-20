@@ -64,7 +64,7 @@ CLASS zscv_run_bo DEFINITION
 
   PRIVATE SECTION.
 
-    CONSTANTS gcv_indexer_program_name TYPE syst-repid VALUE 'ZSCV_CDS_RELATION_INDEXER'.
+    CONSTANTS gcv_indexer_program_name TYPE syst-repid VALUE 'ZSCV_SEARCH_INDEXER'.
     CONSTANTS gcv_index_table TYPE tabname16 VALUE 'ZSCV_CDS_REL'.
 
     DATA gv_run_type TYPE zscv_run-run_type.
